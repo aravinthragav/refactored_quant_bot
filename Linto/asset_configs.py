@@ -23,7 +23,7 @@ ASSETS = {
 
     "GOLD": {
 
-        "ticker": "XAUUSD=X",
+        "ticker": "GC=F",
 
         "interval": "5m",
 
@@ -39,8 +39,8 @@ ASSETS = {
 
         "model_source": "local",
 
-        "tokenizer_path": r"models/gold/tokenizer",
+        "tokenizer_path": r"/teamspace/studios/this_studio/models/gold/tokenizer_base/best_model",
 
-        "model_path": r"models/gold/model"
+        "model_path": r"/teamspace/studios/this_studio/models/gold/basemodel_base/best_model"
     }
 }
