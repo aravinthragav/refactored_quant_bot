@@ -22,21 +22,8 @@ from signal_engine import process_signal
 # MODEL PATHS
 # =========================================================
 
-BASE_DIR = r"C:\Users\ragav\Downloads\refactored_quant_bot\Linto\models"
-
-TOKENIZER_PATH = os.path.join(
-    BASE_DIR,
-    "tokenizer_base",
-    "best_model"
-)
-
-MODEL_PATH = os.path.join(
-    BASE_DIR,
-    "basemodel_base",
-    "best_model"
-)
+BASE_DIR = r"C:\Users\ragav\Downloads\refactored_quant_bot\Linto\models\gold"
 BASE_DIR = r"/teamspace/studios/this_studio/refactored_quant_bot/Linto/models/gold"
-
 TOKENIZER_PATH = os.path.join(
     BASE_DIR,
     "tokenizer_base",
@@ -48,6 +35,7 @@ MODEL_PATH = os.path.join(
     "basemodel_base",
     "best_model"
 )
+
 
 # =========================================================
 # LOAD MODEL

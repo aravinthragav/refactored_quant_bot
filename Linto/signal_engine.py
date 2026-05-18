@@ -13,12 +13,9 @@ from macro_calendar import (
 from db.signal_storage import (
     save_signal,
     signal_exists,
-    generate_signal_hash
-)
-from signal_clustering import (
+    generate_signal_hash,
     recent_similar_signal_exists
 )
-
 
 def process_signal(
     asset_name,

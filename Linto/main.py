@@ -11,6 +11,10 @@ from monitoring import (
     send_alert,
     send_exception_alert
 )
+from session_scheduler import (
+    send_session_briefings
+)
+
 init_db()
 
  #dashboard_process = subprocess.Popen(
@@ -50,7 +54,6 @@ print("Multi Asset Quant Engine Started")
 while True:
 
     try:
-
         validate_open_signals()
 
         for asset_name, config in ASSETS.items():
@@ -58,6 +61,7 @@ while True:
             try:
 
                 print(f"Processing {asset_name}")
+                send_session_briefings()
 
                 process_asset(
                     asset_name,
