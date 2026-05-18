@@ -15,6 +15,10 @@ from db.signal_storage import (
     signal_exists,
     generate_signal_hash
 )
+from signal_clustering import (
+    recent_similar_signal_exists
+)
+
 
 def process_signal(
     asset_name,
@@ -156,6 +160,27 @@ def process_signal(
 ⏱ Horizon:
 {config['pred_len'] * 5} mins
 """
+    
+    clustered = recent_similar_signal_exists(
+
+        symbol=config["ticker"],
+
+        direction=direction,
+
+        current_price=current_price,
+
+        cooldown_minutes=90,
+
+        price_threshold_pct=0.5
+    )
+
+    if clustered:
+
+        print(
+            "Clustered signal skipped"
+        )
+
+        return
 
     send_photo(
         chart_path,

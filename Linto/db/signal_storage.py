@@ -204,6 +204,77 @@ def save_signal(
 
     conn.close()
 
+def recent_similar_signal_exists(
+
+    symbol,
+
+    direction,
+
+    current_price,
+
+    cooldown_minutes=60,
+
+    price_threshold_pct=0.35
+):
+
+    conn = sqlite3.connect(
+        DB_FILE
+    )
+
+    conn.row_factory = sqlite3.Row
+
+    cursor = conn.cursor()
+
+    cursor.execute("""
+
+        SELECT *
+
+        FROM sent_signals
+
+        WHERE symbol = ?
+
+        AND direction = ?
+
+        AND created_at >= datetime(
+            'now',
+            ?
+        )
+
+        ORDER BY id DESC
+
+    """, (
+
+        symbol,
+
+        direction,
+
+        f'-{cooldown_minutes} minutes'
+    ))
+
+    rows = cursor.fetchall()
+
+    conn.close()
+
+    for row in rows:
+
+        old_price = row["entry_price"]
+
+        distance_pct = abs(
+
+            current_price
+            - old_price
+
+        ) / old_price * 100
+
+        if (
+            distance_pct
+            <= price_threshold_pct
+        ):
+
+            return True
+
+    return False
+
 def get_open_signals():
 
     conn = sqlite3.connect(

@@ -7,9 +7,12 @@ from asset_configs import ASSETS
 from forecast_engine import process_asset
 from trade_validator import validate_open_signals
 from db.signal_storage import init_db
-
+from monitoring import (
+    send_alert,
+    send_exception_alert
+)
 init_db()
-
+last_heartbeat = time.time()
 dashboard_process = subprocess.Popen(
 
     [
@@ -67,6 +70,33 @@ while True:
                 )
 
                 traceback.print_exc()
+
+                send_alert(
+
+                    f"{asset_name} FAILED",
+
+                    str(e)
+                )
+
+                send_exception_alert(e)
+
+                 # =====================================
+        # HEARTBEAT
+        # =====================================
+
+        if (
+            time.time()
+            - last_heartbeat
+        ) > 3600:
+
+            send_alert(
+
+                "BOT HEARTBEAT",
+
+                "Bot running normally."
+            )
+
+            last_heartbeat = time.time()
 
     except Exception:
 
