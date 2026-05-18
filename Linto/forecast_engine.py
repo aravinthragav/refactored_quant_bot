@@ -1,6 +1,9 @@
 
 import os
+
+import os
 import datetime as dt
+
 
 import pandas as pd
 import yfinance as yf
@@ -16,9 +19,23 @@ from signal_engine import process_signal
 
 # =========================================================
 # MODEL PATHS
+# MODEL PATHS
 # =========================================================
 
 BASE_DIR = r"C:\Users\ragav\Downloads\refactored_quant_bot\Linto\models"
+
+TOKENIZER_PATH = os.path.join(
+    BASE_DIR,
+    "tokenizer_base",
+    "best_model"
+)
+
+MODEL_PATH = os.path.join(
+    BASE_DIR,
+    "basemodel_base",
+    "best_model"
+)
+BASE_DIR = r"/teamspace/studios/this_studio/refactored_quant_bot/Linto/models/gold"
 
 TOKENIZER_PATH = os.path.join(
     BASE_DIR,
@@ -39,13 +56,15 @@ MODEL_PATH = os.path.join(
 print("Loading tokenizer...")
 
 tokenizer = KronosTokenizer.from_pretrained(
-    TOKENIZER_PATH
+    TOKENIZER_PATH,
+    local_files_only=True
 )
 
 print("Loading model...")
 
 model = Kronos.from_pretrained(
-    MODEL_PATH
+    MODEL_PATH,
+    local_files_only=True
 )
 
 predictor = KronosPredictor(

@@ -12,36 +12,38 @@ from monitoring import (
     send_exception_alert
 )
 init_db()
+
+ #dashboard_process = subprocess.Popen(
 last_heartbeat = time.time()
-dashboard_process = subprocess.Popen(
 
-    [
 
-        sys.executable,
+   # [
 
-        "-m",
+   #     sys.executable,
 
-        "streamlit",
+  #      "-m",
 
-        "run",
+   #     "streamlit",
 
-        "dashboard.py",
+   #     "run",
 
-        "--server.headless=true",
+   #     "dashboard.py",
 
-        "--server.port=8501"
+    #    "--server.headless=true",
 
-    ]
+    #    "--server.port=8501"
 
-)
+ #   ]
 
-print(
-    "Dashboard running at:"
-)
+#)
 
-print(
-    "http://localhost:8501"
-)
+#print(
+#   "Dashboard running at:"
+#)
+
+#print(
+ #   "http://localhost:8501"
+#)
 
 print("Multi Asset Quant Engine Started")
 
