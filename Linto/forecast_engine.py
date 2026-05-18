@@ -1,7 +1,4 @@
-
-import os
 import datetime as dt
-
 import pandas as pd
 import yfinance as yf
 import ta
@@ -15,48 +12,93 @@ from model import (
 from signal_engine import process_signal
 
 # =========================================================
-# MODEL PATHS
+# MODEL CACHE
 # =========================================================
 
-BASE_DIR = r"C:\Users\ragav\Downloads\refactored_quant_bot\Linto\models"
-
-TOKENIZER_PATH = os.path.join(
-    BASE_DIR,
-    "tokenizer_base",
-    "best_model"
-)
-
-MODEL_PATH = os.path.join(
-    BASE_DIR,
-    "basemodel_base",
-    "best_model"
-)
+MODEL_CACHE = {}
 
 # =========================================================
-# LOAD MODEL
+# GET PREDICTOR
 # =========================================================
 
-print("Loading tokenizer...")
+def get_predictor(config):
 
-tokenizer = KronosTokenizer.from_pretrained(
-    TOKENIZER_PATH
-)
+    model_key = (
+        config.get("model_name")
+        or config.get("model_path")
+    )
 
-print("Loading model...")
+    if model_key in MODEL_CACHE:
 
-model = Kronos.from_pretrained(
-    MODEL_PATH
-)
+        return MODEL_CACHE[model_key]
 
-predictor = KronosPredictor(
-    model,
-    tokenizer,
-    device="cpu",
-    max_context=512
-)
+    print(
+        f"Loading model: {model_key}"
+    )
+
+    # =====================================================
+    # LOCAL MODEL
+    # =====================================================
+
+    if config["model_source"] == "local":
+
+        tokenizer = (
+            KronosTokenizer
+            .from_pretrained(
+                config["tokenizer_path"]
+            )
+        )
+
+        model = (
+            Kronos
+            .from_pretrained(
+                config["model_path"]
+            )
+        )
+
+    # =====================================================
+    # HUGGINGFACE MODEL
+    # =====================================================
+
+    elif config["model_source"] == "huggingface":
+
+        tokenizer = (
+            KronosTokenizer
+            .from_pretrained(
+                config["model_name"]
+            )
+        )
+
+        model = (
+            Kronos
+            .from_pretrained(
+                config["model_name"]
+            )
+        )
+
+    else:
+
+        raise Exception(
+            "Unknown model source"
+        )
+
+    predictor = KronosPredictor(
+
+        model,
+
+        tokenizer,
+
+        device="cpu",
+
+        max_context=512
+    )
+
+    MODEL_CACHE[model_key] = predictor
+
+    return predictor
 
 # =========================================================
-# FETCH MARKET DATA
+# FETCH DATA
 # =========================================================
 
 def fetch_market_data(
@@ -66,10 +108,18 @@ def fetch_market_data(
 ):
 
     df = yf.download(
+
         ticker,
+
         interval=interval,
+
         period=period,
-        progress=False
+
+        auto_adjust=False,
+
+        progress=False,
+
+        threads=False
     )
 
     if df.empty:
@@ -97,7 +147,7 @@ def fetch_market_data(
     df = df.reset_index()
 
     # =====================================================
-    # FIND TIMESTAMP COLUMN
+    # FIND TIMESTAMP
     # =====================================================
 
     possible_time_cols = [
@@ -126,19 +176,11 @@ def fetch_market_data(
             f"Columns: {df.columns.tolist()}"
         )
 
-    # =====================================================
-    # RENAME
-    # =====================================================
-
     df = df.rename(
         columns={
             time_col: 'timestamps'
         }
     )
-
-    # =====================================================
-    # LOWERCASE
-    # =====================================================
 
     df.columns = [
         str(c).lower()
@@ -163,6 +205,7 @@ def fetch_market_data(
     # =====================================================
 
     numeric_cols = [
+
         'open',
         'high',
         'low',
@@ -176,10 +219,6 @@ def fetch_market_data(
             df[col],
             errors='coerce'
         )
-
-    # =====================================================
-    # EXTRA
-    # =====================================================
 
     df['amount'] = 0
 
@@ -231,7 +270,7 @@ def add_indicators(df):
     return df.dropna()
 
 # =========================================================
-# PREPARE PREDICTION DATA
+# PREP DATA
 # =========================================================
 
 def prepare_prediction_data(
@@ -301,10 +340,11 @@ def prepare_prediction_data(
     )
 
 # =========================================================
-# GENERATE FORECAST
+# FORECAST
 # =========================================================
 
 def generate_forecast(
+    predictor,
     x_df,
     x_timestamp,
     y_timestamp,
@@ -312,35 +352,45 @@ def generate_forecast(
 ):
 
     pred_df = predictor.predict(
+
         df=x_df,
+
         x_timestamp=x_timestamp,
+
         y_timestamp=y_timestamp,
+
         pred_len=pred_len,
+
         T=0.8,
+
         top_p=0.9,
+
         sample_count=5
     )
 
     return pred_df
 
 # =========================================================
-# CENTRALIZED FORECAST PAYLOAD
+# FORECAST PAYLOAD
 # =========================================================
 
-def get_forecast_payload(
-    ticker,
-    interval="5m",
-    lookback=256,
-    pred_len=60
-):
+def get_forecast_payload(config):
+
+    ticker = config["ticker"]
+
+    predictor = get_predictor(
+        config
+    )
 
     # =====================================================
-    # FETCH DATA
+    # FETCH
     # =====================================================
 
     df = fetch_market_data(
+
         ticker=ticker,
-        interval=interval
+
+        interval=config["interval"]
     )
 
     if df is None:
@@ -361,13 +411,14 @@ def get_forecast_payload(
         x_df,
         x_timestamp,
         y_timestamp
+
     ) = prepare_prediction_data(
 
         df=df,
 
-        lookback=lookback,
+        lookback=config["lookback"],
 
-        pred_len=pred_len
+        pred_len=config["pred_len"]
     )
 
     # =====================================================
@@ -376,13 +427,15 @@ def get_forecast_payload(
 
     pred_df = generate_forecast(
 
+        predictor=predictor,
+
         x_df=x_df,
 
         x_timestamp=x_timestamp,
 
         y_timestamp=y_timestamp,
 
-        pred_len=pred_len
+        pred_len=config["pred_len"]
     )
 
     # =====================================================
@@ -412,9 +465,13 @@ def get_forecast_payload(
     )
 
     confidence = min(
+
         95,
+
         max(
+
             50,
+
             100 - (
                 df['volatility']
                 .iloc[-1]
@@ -456,17 +513,14 @@ def process_asset(
 ):
 
     payload = get_forecast_payload(
-
-        ticker=config["ticker"],
-
-        interval=config["interval"],
-
-        lookback=config["lookback"],
-
-        pred_len=config["pred_len"]
+        config
     )
 
     if payload is None:
+
+        print(
+            f"{asset_name}: no data."
+        )
 
         return
 

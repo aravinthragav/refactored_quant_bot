@@ -4,28 +4,26 @@ ASSETS = {
 
         "ticker": "BTC-USD",
 
-        "asset_type": "crypto",
-
         "interval": "5m",
 
         "lookback": 256,
 
         "pred_len": 12,
 
-        "signal_threshold": 0.20,
+        "signal_threshold": 0.25,
 
-        "atr_multiplier": 1.2,
+        "atr_multiplier": 1.4,
 
         "rr_min": 1.5,
 
-        "macro_sensitive": True
+        "model_source": "huggingface",
+
+        "model_name": "NeoQuasar/Kronos-small"
     },
 
     "GOLD": {
 
         "ticker": "XAUUSD=X",
-
-        "asset_type": "commodity",
 
         "interval": "5m",
 
@@ -39,6 +37,10 @@ ASSETS = {
 
         "rr_min": 1.3,
 
-        "macro_sensitive": True
+        "model_source": "local",
+
+        "tokenizer_path": r"models/gold/tokenizer",
+
+        "model_path": r"models/gold/model"
     }
 }
