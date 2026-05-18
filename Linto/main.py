@@ -1,5 +1,7 @@
 import time
 import traceback
+import subprocess
+import sys
 
 from asset_configs import ASSETS
 from forecast_engine import process_asset
@@ -7,6 +9,36 @@ from trade_validator import validate_open_signals
 from db.signal_storage import init_db
 
 init_db()
+
+dashboard_process = subprocess.Popen(
+
+    [
+
+        sys.executable,
+
+        "-m",
+
+        "streamlit",
+
+        "run",
+
+        "dashboard.py",
+
+        "--server.headless=true",
+
+        "--server.port=8501"
+
+    ]
+
+)
+
+print(
+    "Dashboard running at:"
+)
+
+print(
+    "http://localhost:8501"
+)
 
 print("Multi Asset Quant Engine Started")
 

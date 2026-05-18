@@ -23,7 +23,7 @@ ASSETS = {
 
     "GOLD": {
 
-        "ticker": "GC=F",
+        "ticker": "XAUUSD=X",
 
         "asset_type": "commodity",
 

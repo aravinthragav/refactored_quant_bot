@@ -1,4 +1,4 @@
-````markdown id="b7t3sa"
+
 # AI Quant Trading Signal Engine
 
 Multi-asset AI forecasting and signal execution engine powered by:
@@ -33,7 +33,6 @@ Configured via:
 asset_configs.py
 ````
 
----
 
 # Trade Engine
 
@@ -50,12 +49,12 @@ Rejects weak setups automatically.
 
 Example:
 
-```python
+
 if rr < 1.3:
     skip
 ```
 
----
+
 
 # Telegram Signal Delivery
 
