@@ -1,10 +1,12 @@
 import os
 import datetime as dt
+
 import random
 import feedparser
 from forecast_engine import (
     get_forecast_payload
 )
+
 import streamlit.components.v1 as components
 import streamlit as st
 import pandas as pd
@@ -283,7 +285,7 @@ st_autorefresh(
 
 ASSETS = {
 
-    "BTC": "BTC-USD",
+   # "BTC": "BTC-USD",
 
     "GOLD": "GC=F"
 }
@@ -337,11 +339,10 @@ if (
 
     st.session_state.forecast_history = []
 
-
 # =========================================================
 # MULTI TF SUPPORT / RESISTANCE
 # =========================================================
-
+@st.cache_data(ttl=300)
 def get_sr_levels(
     ticker,
     current_price
@@ -458,12 +459,14 @@ def get_sr_levels(
 
             filtered.append(lvl)
 
-    return filtered
+    if not filtered:
 
+        return []
+
+    return filtered
 
 news_items = get_news_headlines(
     asset_name
-)
 # =========================================================
 # PAYLOAD
 # =========================================================
@@ -479,9 +482,19 @@ config = {
     "pred_len": pred_len
 }
 
-payload = get_forecast_payload(
-    config
-)
+try:
+
+    payload = get_forecast_payload(
+        config
+    )
+
+except Exception as e:
+
+    st.error(
+        f"Forecast failed: {e}"
+    )
+
+    st.stop()
 
 df = payload["df"]
 
@@ -615,6 +628,7 @@ fig.add_trace(
 )
 
 # =========================================================
+# =========================================================
 # EMA20
 # =========================================================
 
@@ -637,7 +651,10 @@ fig.add_trace(
 )
 
 # =========================================================
+# =========================================================
 # EMA89
+# =========================================================
+
 # =========================================================
 
 fig.add_trace(
@@ -661,6 +678,7 @@ fig.add_trace(
 # =========================================================
 # HISTORICAL FORECASTS
 # =========================================================
+
 
 for entry in (
     st.session_state
@@ -840,26 +858,11 @@ fig.update_layout(
 
     height=1000,
 
-    yaxis=dict(
-
+     yaxis=dict(
         side="right",
-
-        fixedrange=False,
-
-        autorange=False,
-
-        range=[
-
-            y_min - padding,
-
-            y_max + padding
-        ]
+        fixedrange=False
     )
 )
-
-# =========================================================
-# PLOT
-# =========================================================
 
 st.plotly_chart(
     fig,
