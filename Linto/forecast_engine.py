@@ -333,12 +333,15 @@ def generate_forecast(
 # CENTRALIZED FORECAST PAYLOAD
 # =========================================================
 
-def get_forecast_payload(
-    ticker,
-    interval="5m",
-    lookback=256,
-    pred_len=60
-):
+def get_forecast_payload(config):
+    ticker = config["ticker"]
+
+    interval = config["interval"]
+
+    lookback = config["lookback"]
+
+    pred_len = config["pred_len"]
+
 
     # =====================================================
     # FETCH DATA
