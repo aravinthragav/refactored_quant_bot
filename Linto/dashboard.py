@@ -45,7 +45,7 @@ ASSETS = {
 
     "BTC": "BTC-USD",
 
-    "GOLD": "XAUUSD=X"
+    "GOLD": "GC=F"
 }
 
 asset_name = st.sidebar.selectbox(
@@ -132,15 +132,19 @@ if (
 
     st.session_state.forecast_history = []
 
+config = {
+
+    "ticker": ticker,
+
+    "interval": "5m",
+
+    "lookback": lookback,
+
+    "pred_len": pred_len
+}
+
 payload = get_forecast_payload(
-
-    ticker=ticker,
-
-    interval="5m",
-
-    lookback=lookback,
-
-    pred_len=pred_len
+    config
 )
 
 df = payload["df"]
@@ -340,7 +344,12 @@ fig.update_layout(
 
     template="plotly_dark",
 
-    height=800
+    height=800,
+
+     yaxis=dict(
+        side="right",
+        fixedrange=False
+    )
 )
 
 st.plotly_chart(

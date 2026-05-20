@@ -1,5 +1,4 @@
 
-import os
 
 import os
 import datetime as dt
@@ -23,7 +22,7 @@ from signal_engine import process_signal
 # =========================================================
 
 BASE_DIR = r"C:\Users\ragav\Downloads\refactored_quant_bot\Linto\models\gold"
-BASE_DIR = r"/teamspace/studios/this_studio/refactored_quant_bot/Linto/models/gold"
+#BASE_DIR = r"/teamspace/studios/this_studio/refactored_quant_bot/Linto/models/gold"
 TOKENIZER_PATH = os.path.join(
     BASE_DIR,
     "tokenizer_base",

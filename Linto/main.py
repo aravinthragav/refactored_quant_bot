@@ -17,37 +17,37 @@ from session_scheduler import (
 
 init_db()
 
- #dashboard_process = subprocess.Popen(
 last_heartbeat = time.time()
 
+    
+dashboard_process = subprocess.Popen(
+    [
 
-   # [
+    sys.executable,
 
-   #     sys.executable,
+       "-m",
 
-  #      "-m",
+        "streamlit",
 
-   #     "streamlit",
+       "run",
 
-   #     "run",
+        "dashboard.py",
 
-   #     "dashboard.py",
+       "--server.headless=true",
 
-    #    "--server.headless=true",
+       "--server.port=8501"
 
-    #    "--server.port=8501"
+   ]
 
- #   ]
+)
 
-#)
+print(
+   "Dashboard running at:"
+)
 
-#print(
-#   "Dashboard running at:"
-#)
-
-#print(
- #   "http://localhost:8501"
-#)
+print(
+    "http://localhost:8501"
+)
 
 print("Multi Asset Quant Engine Started")
 
