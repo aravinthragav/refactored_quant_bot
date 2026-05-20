@@ -86,23 +86,23 @@ while True:
 
                 send_exception_alert(e)
 
-                 # =====================================
-        # HEARTBEAT
-        # =====================================
+                # =====================================
+                # HEARTBEAT
+                # =====================================
 
-        if (
-            time.time()
-            - last_heartbeat
-        ) > 3600:
+                if (
+                    time.time()
+                    - last_heartbeat
+                ) > 3600:
 
-            send_alert(
+                    send_alert(
 
-                "BOT HEARTBEAT",
+                        "BOT HEARTBEAT",
 
-                "Bot running normally."
-            )
+                        "Bot running normally."
+                    )
 
-            last_heartbeat = time.time()
+                    last_heartbeat = time.time()
 
     except Exception:
 
