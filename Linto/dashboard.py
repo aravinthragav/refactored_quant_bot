@@ -99,7 +99,7 @@ if (
 # =========================================================
 # MULTI TF SUPPORT / RESISTANCE
 # =========================================================
-
+@st.cache_data(ttl=300)
 def get_sr_levels(
     ticker,
     current_price
@@ -216,6 +216,10 @@ def get_sr_levels(
 
             filtered.append(lvl)
 
+    if not filtered:
+
+        return []
+
     return filtered
 
 # =========================================================
@@ -233,9 +237,19 @@ config = {
     "pred_len": pred_len
 }
 
-payload = get_forecast_payload(
-    config
-)
+try:
+
+    payload = get_forecast_payload(
+        config
+    )
+
+except Exception as e:
+
+    st.error(
+        f"Forecast failed: {e}"
+    )
+
+    st.stop()
 
 df = payload["df"]
 
@@ -513,7 +527,12 @@ for lvl in sr_levels:
     visible_prices.append(
         lvl["price"]
     )
+    
+if not visible_prices:
 
+    visible_prices = [
+        current_price
+    ]
 y_min = min(visible_prices)
 
 y_max = max(visible_prices)
