@@ -751,7 +751,7 @@ for lvl in sr_levels:
         showarrow=False,
 
         xshift=80,
-
+        yshift=14,
         font=dict(
             size=10,
             color=color
