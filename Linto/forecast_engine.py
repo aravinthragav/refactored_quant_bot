@@ -21,46 +21,47 @@ from signal_engine import process_signal
 # MODEL PATHS
 # =========================================================
 
-BASE_DIR = r"C:\Users\ragav\Downloads\refactored_quant_bot\Linto\models\gold"
-#BASE_DIR = r"/teamspace/studios/this_studio/refactored_quant_bot/Linto/models/gold"
-TOKENIZER_PATH = os.path.join(
-    BASE_DIR,
-    "tokenizer_base",
-    "best_model"
-)
+from pathlib import Path
 
-MODEL_PATH = os.path.join(
-    BASE_DIR,
-    "basemodel_base",
-    "best_model"
-)
+BASE_DIR = Path(__file__).resolve().parent
+MODELS_DIR = BASE_DIR / "models"
+
+TOKENIZER_PATH = MODELS_DIR / "gold" / "tokenizer_base" / "best_model"
+MODEL_PATH = MODELS_DIR / "gold" / "basemodel_base" / "best_model"
 
 
 # =========================================================
 # LOAD MODEL
 # =========================================================
 
-print("Loading tokenizer...")
+predictor = None
 
-tokenizer = KronosTokenizer.from_pretrained(
-    TOKENIZER_PATH,
-    local_files_only=True
-)
+def get_predictor():
+    global predictor
 
-print("Loading model...")
+    if predictor is None:
+        print("Loading tokenizer...")
 
-model = Kronos.from_pretrained(
-    MODEL_PATH,
-    local_files_only=True
-)
+        tokenizer = KronosTokenizer.from_pretrained(
+            str(TOKENIZER_PATH),
+            local_files_only=True
+        )
+        
+        print("Loading model...")
+        
+        model = Kronos.from_pretrained(
+            str(MODEL_PATH),
+            local_files_only=True
+        )
+        
+        predictor = KronosPredictor(
+            model,
+            tokenizer,
+            device="cpu",
+            max_context=512
+        )
 
-predictor = KronosPredictor(
-    model,
-    tokenizer,
-    device="cpu",
-    max_context=512
-)
-
+    return predictor
 # =========================================================
 # FETCH MARKET DATA
 # =========================================================
@@ -316,7 +317,7 @@ def generate_forecast(
     y_timestamp,
     pred_len
 ):
-
+    predictor = get_predictor()
     pred_df = predictor.predict(
         df=x_df,
         x_timestamp=x_timestamp,
@@ -464,16 +465,7 @@ def process_asset(
     config
 ):
 
-    payload = get_forecast_payload(
-
-        ticker=config["ticker"],
-
-        interval=config["interval"],
-
-        lookback=config["lookback"],
-
-        pred_len=config["pred_len"]
-    )
+    payload = get_forecast_payload(config)
 
     if payload is None:
 

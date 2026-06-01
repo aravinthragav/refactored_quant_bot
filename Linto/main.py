@@ -25,17 +25,17 @@ dashboard_process = subprocess.Popen(
 
     sys.executable,
 
-       "-m",
+      "-m",
 
-        "streamlit",
+       "streamlit",
 
-       "run",
+      "run",
 
-        "dashboard.py",
+       "dashboard.py",
 
-       "--server.headless=true",
+      "--server.headless=true",
 
-       "--server.port=8501"
+      "--server.port=8501"
 
    ]
 
@@ -46,7 +46,7 @@ print(
 )
 
 print(
-    "http://localhost:8501"
+ #   "http://localhost:8501"
 )
 
 print("Multi Asset Quant Engine Started")

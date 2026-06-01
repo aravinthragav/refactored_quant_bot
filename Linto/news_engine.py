@@ -20,11 +20,37 @@ RSS_FEEDS = {
         "https://cointelegraph.com/rss"
     ],
 
-    "GOLD": [
+     "GOLD": [
 
-        "https://www.reutersagency.com/feed/?best-topics=gold",
+        # Reuters Commodities
+        "https://www.reutersagency.com/feed/?best-topics=commodities",
 
-        "https://www.investing.com/rss/news_25.rss"
+        # Investing.com Commodities
+        "https://www.investing.com/rss/news_25.rss",
+
+        # FXStreet Gold
+        "https://www.fxstreet.com/rss/news",
+
+        # Kitco News
+        "https://www.kitco.com/rss/news",
+
+        # Mining.com Precious Metals
+        "https://www.mining.com/feed/",
+
+        # MarketWatch Markets
+        "https://feeds.content.dowjones.io/public/rss/mw_marketpulse",
+
+        # Yahoo Finance News
+        "https://finance.yahoo.com/news/rssindex",
+
+        # CNBC Markets
+        "https://www.cnbc.com/id/100003114/device/rss/rss.html",
+
+        # Federal Reserve News
+        "https://www.federalreserve.gov/feeds/press_all.xml",
+
+        # IMF News
+        "https://www.imf.org/en/News/RSS"
     ]
 }
 KEYWORDS = {
@@ -43,7 +69,25 @@ KEYWORDS = {
         "treasury",
         "inflation",
         "war",
-        "trump"
+        "trump",
+        "gold",
+        "xau",
+        "bullion",
+        "precious metal",
+        "treasury yields",
+        "yield",
+        "dollar index",
+        "dxy",
+        "federal reserve",
+        "fed",
+        "interest rate",
+        "inflation",
+        "cpi",
+        "ppi",
+        "middle east",
+        "geopolitical",
+        "safe haven",
+        "central bank"
     ]
 }
 
