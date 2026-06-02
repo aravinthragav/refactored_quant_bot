@@ -92,7 +92,7 @@ margin-bottom:10px;
 ">
 
 <div>
-
+<meta name="google-adsense-account" content="ca-pub-0024771137213737">
 <div style="
 font-size:34px;
 font-weight:800;
