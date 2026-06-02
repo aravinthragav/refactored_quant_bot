@@ -22,13 +22,125 @@ from streamlit_autorefresh import (
 # =========================================================
 
 st.set_page_config(
-    page_title="AI Quant Dashboard",
+    page_title="AI Gold Forecast Terminal",
     layout="wide"
 )
 
-st.title(
-    "🟡 AI Quant Forecast Dashboard"
-)
+# =====================================
+# HIDE STREAMLIT UI
+# =====================================
+
+st.markdown("""
+<style>
+
+/* Reduce top padding without moving content off-screen */
+.block-container {
+    padding-top: 0.8rem !important;
+    padding-bottom: 0rem !important;
+}
+
+/* Hide Streamlit UI */
+#MainMenu {visibility:hidden;}
+footer {visibility:hidden;}
+header {visibility:hidden;}
+
+[data-testid="stToolbar"] {
+    display:none !important;
+}
+
+[data-testid="stDecoration"] {
+    display:none !important;
+}
+
+/* Remove top header space */
+[data-testid="stHeader"] {
+    display:none !important;
+}
+
+/* Remove extra page gap */
+[data-testid="stAppViewContainer"] > .main {
+    padding-top: 0rem !important;
+}
+
+</style>
+""", unsafe_allow_html=True)
+
+st.markdown(f"""
+<div style="
+display:flex;
+justify-content:space-between;
+align-items:center;
+background:linear-gradient(90deg,#06142c,#0d1f44);
+padding:24px;
+border-radius:16px;
+border:1px solid rgba(255,255,255,0.08);
+margin-bottom:10px;
+">
+
+<div>
+
+<div style="
+font-size:42px;
+font-weight:800;
+color:white;
+line-height:1.1;
+">
+🟡 AI Gold Forecast Terminal
+</div>
+
+<div style="
+margin-top:8px;
+font-size:16px;
+color:#9CA3AF;
+">
+Smart Signals • Market Intelligence • Real-Time Forecasting
+</div>
+
+</div>
+
+<div style="
+text-align:center;
+min-width:280px;
+">
+
+<div style="
+font-size:15px;
+color:#9CA3AF;
+margin-bottom:8px;
+">
+30-Signal Accuracy
+</div>
+
+<div style="
+font-size:46px;
+font-weight:800;
+color:#22C55E;
+line-height:1;
+">
+71.4%
+</div>
+
+<div style="margin-top:16px;">
+<a href="https://t.me/tradingsignalsAR"
+target="_blank"
+style="
+text-decoration:none;
+background:#229ED9;
+padding:10px 20px;
+border-radius:10px;
+color:white;
+font-weight:700;
+font-size:15px;
+display:inline-block;
+">
+📢 Join Telegram →
+</a>
+</div>
+
+</div>
+
+</div>
+""", unsafe_allow_html=True)
 
 # =========================================================
 # SIGNAL BANNER
@@ -222,9 +334,35 @@ def get_news_headlines(asset_name):
 
         feeds = [
 
+            # Reuters Commodities
+            "https://www.reutersagency.com/feed/?best-topics=commodities",
+
+            # Investing.com Commodities
+            "https://www.investing.com/rss/news_25.rss",
+
+            # FXStreet Gold
             "https://www.fxstreet.com/rss/news",
 
-            "https://www.forexlive.com/feed/news"
+            # Kitco News
+            "https://www.kitco.com/rss/news",
+
+            # Mining.com Precious Metals
+            "https://www.mining.com/feed/",
+
+            # MarketWatch Markets
+            "https://feeds.content.dowjones.io/public/rss/mw_marketpulse",
+
+            # Yahoo Finance News
+            "https://finance.yahoo.com/news/rssindex",
+
+            # CNBC Markets
+            "https://www.cnbc.com/id/100003114/device/rss/rss.html",
+
+            # Federal Reserve News
+            "https://www.federalreserve.gov/feeds/press_all.xml",
+
+            # IMF News
+            "https://www.imf.org/en/News/RSS"
         ]
 
     headlines = []
@@ -290,32 +428,34 @@ ASSETS = {
     "GOLD": "GC=F"
 }
 
-asset_name = st.sidebar.selectbox(
-    "Asset",
-    list(ASSETS.keys())
-)
+#asset_name = st.sidebar.selectbox(
+ #   "Asset",
+#    list(ASSETS.keys())
+#)
 
-ticker = ASSETS[
-    asset_name
-]
+ticker = "GC=F"
+asset_name = "GOLD"
+
 
 # =========================================================
 # SETTINGS
 # =========================================================
 
-lookback = st.sidebar.slider(
-    "Lookback",
-    100,
-    512,
-    256
-)
+lookback = 256
+# st.sidebar.slider(
+#    "Lookback",
+ #   100,
+#    512,
+#    256
+#)
 
-pred_len = st.sidebar.slider(
-    "Prediction Length",
-    10,
-    120,
-    12
-)
+pred_len = 12
+#st.sidebar.slider(
+ #   "Prediction Length",
+ #   10,
+ #   120,
+ #   12
+#)
 
 # =========================================================
 # CACHE
@@ -842,48 +982,6 @@ fig.add_annotation(
     borderpad=8
 )
 # =========================================================
-# LAYOUT
-# =========================================================
-
-fig.update_layout(
-
-    title=f"{asset_name} 5min AI Forecast",
-
-    xaxis_title="Time",
-
-    yaxis_title="Price",
-
-    xaxis_rangeslider_visible=False,
-
-    template="plotly_dark",
-
-    height=1000,
-
-     yaxis=dict(
-        side="right",
-        fixedrange=False
-    )
-)
-
-st.plotly_chart(
-    fig,
-    width="stretch"
-)
-
-# =========================================================
-# FORECAST TABLE
-# =========================================================
-
-#st.subheader(
-#    "Forecast Data"
-#
-
-#st.dataframe(
-#    pred_df,
-#    width="stretch"
-#)
-
-# =========================================================
 # MAE
 # =========================================================
 
@@ -909,16 +1007,78 @@ try:
         predicted
     )
 
-    st.metric(
-        "MAE",
-        round(mae, 4)
-    )
+    #st.metric(
+     #   "MAE",
+    #    round(mae, 4)
+    #)
 
 except:
 
     st.info(
         "MAE unavailable"
     )
+# =========================================================
+# LAYOUT
+# =========================================================
+
+fig.update_layout(
+
+    title=f"{asset_name} 5min AI Forecast",
+
+    xaxis_title="Time",
+
+    yaxis_title="Price",
+
+    xaxis_rangeslider_visible=False,
+
+    template="plotly_dark",
+
+    height=800,
+
+     yaxis=dict(
+        side="right",
+        fixedrange=False
+    )
+)
+
+
+k1, k2, k3, k4, k5 = st.columns(5)
+k1.metric("Current", f"{current_price:.2f}")
+k2.metric("Forecast", f"{forecast_price:.2f}")
+k3.metric("Move %", f"{move_pct:.2f}%")
+k4.metric("Direction", trend_text)
+k5.metric("MAE", f"{round(mae, 4)}%")
+
+#st.markdown("---")
+
+left_ad, chart_col, right_ad = st.columns([1,4,1])
+
+with left_ad:
+    components.html('<a href="https://one.exnessonelink.com/intl/en/a/thvdkhvd" target="_blank"><img src="https://d3dpet1g0ty5ed.cloudfront.net/EN_Take_control_300x600.png" width="100%"></a>', height=620)
+
+with chart_col:
+    st.plotly_chart(fig, width="stretch")
+
+with right_ad:
+    components.html('<a href="https://one.exnessonelink.com/intl/en/a/thvdkhvd" target="_blank"><img src="https://d3dpet1g0ty5ed.cloudfront.net/EN_Trading_Conditions_300x600px.gif" width="100%"></a>', height=620)
+
+components.html('<div style="text-align:center;"><a href="https://one.exnessonelink.com/intl/en/a/thvdkhvd" target="_blank"> <img src="https://d3dpet1g0ty5ed.cloudfront.net/EN_Trade_USOIL_with_Exness_720x90.png"</a></div>', height=110)
+
+
+# =========================================================
+# FORECAST TABLE
+# =========================================================
+
+#st.subheader(
+#    "Forecast Data"
+#
+
+#st.dataframe(
+#    pred_df,
+#    width="stretch"
+#)
+
+
 
 # =========================================================
 # NEWS TICKER
@@ -981,7 +1141,7 @@ ticker_html = f"""
 
     white-space: nowrap;
 
-    animation: ticker-scroll 80s linear infinite;
+    animation: ticker-scroll 120s linear infinite;
 }}
 
 .news-item {{
@@ -998,7 +1158,7 @@ ticker_html = f"""
 
     font-size: 14px;
 
-    font-weight: 500;
+    font-weight: 600;
 }}
 
 .news-dot {{
@@ -1041,6 +1201,4 @@ components.html(
 # FOOTER
 # =========================================================
 
-st.caption(
-    "Auto refreshes every 5 minutes". To purchase this bot or request a custom version, contact us at <a href='mailto:arnkl@gmail.com'>info@quantbot.com</a>  
-)
+st.markdown("""<hr><div style='text-align:center;color:#888;'>Auto refreshes every 5 minutes<br>To purchase this bot or finetune a custom asset: <a href='mailto:arnkl@gmail.com'>arnkl@gmail.com</a><br>This is for educational purposes only and does not constitute financial advice.</div>""", unsafe_allow_html=True)

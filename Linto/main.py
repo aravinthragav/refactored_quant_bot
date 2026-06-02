@@ -4,6 +4,10 @@ import subprocess
 import sys
 
 from asset_configs import ASSETS
+import os
+
+os.environ["STREAMLIT_SERVER_FILE_WATCHER_TYPE"] = "none"
+os.environ["STREAMLIT_BROWSER_GATHER_USAGE_STATS"] = "false"
 from forecast_engine import process_asset
 from trade_validator import validate_open_signals
 from db.signal_storage import init_db
@@ -31,7 +35,7 @@ dashboard_process = subprocess.Popen(
 
       "run",
 
-       "dashboard.py",
+       "dashboard_makeover.py",
 
       "--server.headless=true",
 
