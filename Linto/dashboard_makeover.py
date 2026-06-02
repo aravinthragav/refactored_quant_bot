@@ -28,7 +28,22 @@ st.set_page_config(
     page_icon=icon,
     layout="wide"
 )
+components.html("""
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-8C0VKHXDF6"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
 
+  gtag('config', 'G-8C0VKHXDF6');
+</script>
+""", height=0)
+components.html("""
+<script async
+src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-0024771137213737"
+crossorigin="anonymous"></script>
+""", height=0)
 # =====================================
 # HIDE STREAMLIT UI
 # =====================================
