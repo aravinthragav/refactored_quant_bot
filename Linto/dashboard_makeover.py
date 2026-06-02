@@ -1201,4 +1201,4 @@ components.html(
 # FOOTER
 # =========================================================
 
-st.markdown("""<hr><div style='text-align:center;color:#888;'>Auto refreshes every 5 minutes<br>To purchase this bot or finetune a custom asset: <a href='mailto:arnkl@gmail.com'>arnkl@gmail.com</a><br>This is for educational purposes only and does not constitute financial advice.</div>""", unsafe_allow_html=True)
+st.markdown("""<hr><div style='text-align:center;color:#888;'>Auto refreshes every 5 minutes<br>To purchase this bot or finetune a custom asset: <a href='mailto:arnkl@gmail.com'>arkankl07@gmail.com</a><br>This is for educational purposes only and does not constitute financial advice.</div>""", unsafe_allow_html=True)
