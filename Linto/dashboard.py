@@ -1042,5 +1042,5 @@ components.html(
 # =========================================================
 
 st.caption(
-    "Auto refreshes every 5 minutes". To purchase this bot or request a custom version, contact us at <a href='mailto:arnkl@gmail.com'>info@quantbot.com</a>  
+    "Auto refreshes every 5 minutes. To purchase this bot or request a custom version, contact us at <a href='mailto:arnkl@gmail.com'>info@quantbot.com</a>"  
 )

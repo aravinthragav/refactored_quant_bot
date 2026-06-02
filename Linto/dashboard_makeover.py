@@ -16,6 +16,8 @@ import plotly.graph_objects as go
 from streamlit_autorefresh import (
     st_autorefresh
 )
+from PIL import Image
+icon = Image.open("assets/logo.png")
 
 # =========================================================
 # PAGE
@@ -23,12 +25,24 @@ from streamlit_autorefresh import (
 
 st.set_page_config(
     page_title="AI Gold Forecast Terminal",
+    page_icon=icon,
     layout="wide"
 )
 
 # =====================================
 # HIDE STREAMLIT UI
 # =====================================
+st.markdown("""
+<style>
+
+/* Reduce top padding without moving content off-screen */
+.main .block-container {
+    max-width: 1600px;
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+</style>
+""", unsafe_allow_html=True)
 
 st.markdown("""
 <style>
@@ -71,7 +85,7 @@ display:flex;
 justify-content:space-between;
 align-items:center;
 background:linear-gradient(90deg,#06142c,#0d1f44);
-padding:24px;
+padding:14px;
 border-radius:16px;
 border:1px solid rgba(255,255,255,0.08);
 margin-bottom:10px;
@@ -80,7 +94,7 @@ margin-bottom:10px;
 <div>
 
 <div style="
-font-size:42px;
+font-size:34px;
 font-weight:800;
 color:white;
 line-height:1.1;
@@ -112,7 +126,7 @@ margin-bottom:8px;
 </div>
 
 <div style="
-font-size:46px;
+font-size:34px;
 font-weight:800;
 color:#22C55E;
 line-height:1;
@@ -142,6 +156,13 @@ display:inline-block;
 </div>
 """, unsafe_allow_html=True)
 
+st.markdown("""
+<style>
+.st-emotion-cache-8atqhb {
+    display: none !important;
+}
+</style>
+""", unsafe_allow_html=True)
 # =========================================================
 # SIGNAL BANNER
 # =========================================================
@@ -1041,8 +1062,7 @@ fig.update_layout(
     )
 )
 
-
-k1, k2, k3, k4, k5 = st.columns(5)
+k1, k2, k3, k4, k5 = st.columns(5,gap="small")
 k1.metric("Current", f"{current_price:.2f}")
 k2.metric("Forecast", f"{forecast_price:.2f}")
 k3.metric("Move %", f"{move_pct:.2f}%")
