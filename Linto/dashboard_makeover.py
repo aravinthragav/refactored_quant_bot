@@ -121,7 +121,7 @@ line-height:1;
 </div>
 
 <div style="margin-top:16px;">
-<a href="https://t.me/tradingsignalsAR"
+<a href="https://t.me/tradingalertsAR"
 target="_blank"
 style="
 text-decoration:none;
