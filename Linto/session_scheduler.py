@@ -47,6 +47,15 @@ def send_session_briefings():
             session_key
         ] = True
 
+        # Generate the daily blog report at London (07:00 UTC) and NewYork (13:00 UTC) session starts
+        if session_name in ["London", "NewYork"]:
+            try:
+                from blog_generator import generate_blog_report
+                print(f"Triggering automatic daily blog generation for {session_name} session...")
+                generate_blog_report()
+            except Exception as e:
+                print(f"Failed to generate blog report for {session_name} session: {e}")
+
         for asset in ASSETS.keys():
             # Skip GOLD session briefings on weekends (Saturday=5, Sunday=6)
             if asset == "GOLD" and dt.datetime.now().weekday() in [5, 6]:
