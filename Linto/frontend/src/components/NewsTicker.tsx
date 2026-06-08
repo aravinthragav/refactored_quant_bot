@@ -11,8 +11,8 @@ export default function NewsTicker({ apiUrl }: { apiUrl?: string }) {
       .then((res) => res.json())
       .then((data) => {
         if (data.success && data.headlines) {
-          // duplicate to make scrolling seamless
-          setNews([...data.headlines, ...data.headlines, ...data.headlines]);
+          // Duplicate exactly once so that translating by -50% aligns perfectly for an invisible loop reset
+          setNews([...data.headlines, ...data.headlines]);
         }
       })
       .catch((err) => console.error("Failed to fetch news:", err));
