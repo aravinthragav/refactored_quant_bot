@@ -23,6 +23,16 @@ app.add_middleware(
 
 news_cache = {}
 
+def is_blacklisted(title):
+    title_lower = title.lower()
+    blacklist = [
+        "website", "newsletter", "subscribe", "subscription", "sign up", "follow us",
+        "advertisement", "goldseek.com", "kitco.com", "cookie", "privacy policy",
+        "launch new", "feedback", "terms of use", "disclaimer", "rss feed", "advertise",
+        "sponsor", "sponsorship"
+    ]
+    return any(b in title_lower for b in blacklist)
+
 def is_news_relevant(title, asset_name):
     title_lower = title.lower()
     if asset_name == "BTC":
@@ -76,6 +86,10 @@ def get_news_headlines(asset_name):
             feed = feedparser.parse(url)
             for entry in feed.entries[:5]:
                 title = entry.title.replace("&amp;", "&")
+                # Skip blacklisted/self-promotional headlines
+                if is_blacklisted(title):
+                    continue
+                # Filter general feeds for relevance
                 if not should_filter or is_news_relevant(title, asset_name):
                     headlines.append(title)
         except Exception:
