@@ -14,11 +14,9 @@ export default function ChartWidget({ data }: ChartWidgetProps) {
   useEffect(() => {
     if (!chartContainerRef.current || !data) return;
 
-
-
     const chart = createChart(chartContainerRef.current, {
       layout: {
-        background: { type: ColorType.Solid, color: "#11131b" },
+        background: { type: ColorType.Solid, color: "#0d0f16" },
         textColor: "#d1d4dc",
       },
       grid: {
@@ -38,7 +36,7 @@ export default function ChartWidget({ data }: ChartWidgetProps) {
         rightOffset: typeof window !== "undefined" && window.innerWidth < 768 ? 12 : 35,
       },
       width: chartContainerRef.current.clientWidth,
-      height: typeof window !== "undefined" && window.innerWidth < 768 ? 400 : 600,
+      height: typeof window !== "undefined" && window.innerWidth < 768 ? 400 : 550,
     });
 
     chartRef.current = chart;
@@ -53,8 +51,8 @@ export default function ChartWidget({ data }: ChartWidgetProps) {
           vertAlign: "center",
           lines: [
             {
-              text: isMarketClosed ? "Market Closed" : "GOLD 5min",
-              color: isMarketClosed ? "rgba(239, 83, 80, 0.15)" : "rgba(255, 255, 255, 0.08)",
+              text: isMarketClosed ? "Market Closed" : "AI GOLD FORECAST",
+              color: isMarketClosed ? "rgba(239, 83, 80, 0.15)" : "rgba(212, 175, 55, 0.06)",
               fontSize: isMarketClosed ? 64 : 72,
             },
           ],
@@ -101,7 +99,7 @@ export default function ChartWidget({ data }: ChartWidgetProps) {
 
     // Forecast Line
     if (data.forecast_data) {
-      const forecastColor = data.direction === "LONG" ? "#ff8c00" : "#2962ff";
+      const forecastColor = "#ff9800";
       const forecastSeries = chart.addSeries(LineSeries, {
         color: forecastColor,
         lineWidth: 3,
@@ -145,7 +143,7 @@ export default function ChartWidget({ data }: ChartWidgetProps) {
         const mobile = window.innerWidth < 768;
         chart.applyOptions({
           width: chartContainerRef.current.clientWidth,
-          height: mobile ? 400 : 600
+          height: mobile ? 400 : 550
         });
         chart.timeScale().applyOptions({
           rightOffset: mobile ? 12 : 35
@@ -162,5 +160,46 @@ export default function ChartWidget({ data }: ChartWidgetProps) {
     };
   }, [data]);
 
-  return <div ref={chartContainerRef} className="w-full h-[400px] md:h-[600px] rounded-lg overflow-hidden border border-white/10" />;
+  const isLong = data?.direction?.includes("Bullish") || data?.direction === "LONG";
+
+  return (
+    <div className="glass-card rounded-xl overflow-hidden">
+      {/* Chart Header */}
+      <div className="flex justify-between items-center px-4 py-3 border-b border-outline-variant/30">
+        <div className="flex items-center gap-3">
+          <span className="font-playfair text-base md:text-lg font-bold gold-shimmer-text">GOLD / USD</span>
+          <span className="px-2 py-0.5 bg-surface-container-high rounded text-[10px] font-bold border border-outline-variant/30 text-on-surface-variant">
+            5M INTERVAL
+          </span>
+        </div>
+        <div className="flex items-center gap-2 text-[10px] text-on-surface-variant font-semibold">
+          <span className="flex items-center gap-1">
+            <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: "#29b6f6" }} /> EMA(20)
+          </span>
+          <span className="flex items-center gap-1">
+            <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: "#ec407a" }} /> EMA(89)
+          </span>
+          <span className="flex items-center gap-1 text-[#ff9800]">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#ff9800]" /> Forecast
+          </span>
+        </div>
+      </div>
+
+      {/* Chart Container */}
+      <div ref={chartContainerRef} className="w-full h-[400px] md:h-[550px]" />
+
+      {/* Chart Footer */}
+      <div className="flex items-center justify-between px-4 py-2 bg-surface-container-lowest/50 backdrop-blur-md border-t border-outline-variant/20 text-[10px] font-semibold text-on-surface-variant">
+        <div className="flex items-center gap-3">
+          <span className="flex items-center gap-1">
+            <span className="w-1.5 h-1.5 bg-[#26a69a] rounded-full" /> Up
+          </span>
+          <span className="flex items-center gap-1">
+            <span className="w-1.5 h-1.5 bg-[#ef5350] rounded-full" /> Down
+          </span>
+        </div>
+        <span className="text-primary font-bold animate-pulse tracking-wider">● LIVE</span>
+      </div>
+    </div>
+  );
 }

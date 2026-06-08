@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { ArrowLeft, BookOpen, Compass, ShieldAlert, Award, ArrowUpRight, ArrowDownRight, Sparkles } from "lucide-react";
+import Footer from "@/components/Footer";
 
 interface Strategy {
   id: number;
@@ -227,24 +228,24 @@ export default function StrategiesPage() {
   const activeStrategy = strategies.find((s) => s.id === selectedId) || strategies[0];
 
   return (
-    <div className="min-h-screen bg-[#070b13] text-white selection:bg-amber-500/30 selection:text-amber-200">
+    <div className="min-h-screen text-white selection:bg-primary/30 selection:text-gold-light" style={{ backgroundColor: "#06070a" }}>
       {/* Ambient glows */}
-      <div className="absolute top-0 right-10 w-[500px] h-[500px] bg-amber-500/5 rounded-full blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-10 left-10 w-[600px] h-[600px] bg-blue-500/5 rounded-full blur-[150px] pointer-events-none" />
+      <div className="absolute top-0 right-10 w-[500px] h-[500px] bg-[rgba(212,175,55,0.05)] rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-10 left-10 w-[600px] h-[600px] bg-[rgba(33,150,243,0.04)] rounded-full blur-[150px] pointer-events-none" />
 
-      <div className="max-w-6xl mx-auto px-4 py-8 relative z-10">
+      <div className="w-full px-4 md:px-12 py-8 relative z-10">
         {/* Navigation */}
-        <header className="flex items-center justify-between mb-12 border-b border-white/10 pb-6">
+        <header className="flex items-center justify-between mb-12 border-b border-outline-variant/30 pb-6">
           <Link
             href="/"
-            className="flex items-center gap-2 text-sm text-slate-400 hover:text-white transition-colors duration-200 group"
+            className="flex items-center gap-2 text-sm text-on-surface-variant hover:text-white transition-colors duration-200 group"
           >
             <ArrowLeft className="h-4 w-4 transition-transform duration-200 group-hover:-translate-x-1" />
             Back to Terminal
           </Link>
           <div className="flex items-center gap-3">
-            <Compass className="h-5 w-5 text-amber-500" />
-            <span className="text-sm font-semibold tracking-wider text-slate-300 uppercase">
+            <Compass className="h-5 w-5 text-primary" />
+            <span className="text-sm font-semibold tracking-wider text-on-surface-variant uppercase">
               Trading Strategies
             </span>
           </div>
@@ -252,10 +253,10 @@ export default function StrategiesPage() {
 
         {/* Hero */}
         <div className="text-center max-w-2xl mx-auto mb-16">
-          <h1 className="text-4xl sm:text-5xl font-black tracking-tight text-white mb-6 leading-tight">
-            Gold Trading <span className="bg-gradient-to-r from-amber-400 via-amber-200 to-yellow-500 bg-clip-text text-transparent">Strategies</span>
+          <h1 className="text-4xl sm:text-5xl font-black tracking-tight text-white mb-6 leading-tight font-playfair">
+            Gold Trading <span className="gold-shimmer-text">Strategies</span>
           </h1>
-          <p className="text-slate-300 text-lg leading-relaxed">
+          <p className="text-on-surface-variant text-lg leading-relaxed">
             Explore 10 proven, institutional-grade quantitative strategies specifically customized for trading Gold (XAU/USD).
           </p>
         </div>
@@ -264,25 +265,25 @@ export default function StrategiesPage() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           
           {/* Left Navigation Panel */}
-          <div className="lg:col-span-4 space-y-3 max-h-[600px] overflow-y-auto pr-2 custom-scrollbar">
+          <div className="lg:col-span-4 space-y-3 max-h-[600px] overflow-y-auto pr-2 scrollbar-none">
             {strategies.map((strategy) => (
               <button
                 key={strategy.id}
                 onClick={() => setSelectedId(strategy.id)}
                 className={`w-full text-left p-4 rounded-xl border transition-all duration-300 flex items-start gap-3 ${
                   selectedId === strategy.id
-                    ? "border-amber-500/50 bg-amber-500/10 text-white shadow-[0_0_15px_-3px_rgba(245,158,11,0.2)]"
-                    : "border-white/5 bg-white/[0.01] hover:border-white/15 hover:bg-white/[0.03] text-slate-400 hover:text-slate-200"
+                    ? "border-primary/50 bg-primary/10 text-white shadow-[0_0_15px_-3px_rgba(212,175,55,0.2)]"
+                    : "border-outline-variant/20 glass-card hover:border-primary/25 text-on-surface-variant hover:text-on-surface"
                 }`}
               >
                 <span className={`h-6 w-6 rounded-lg flex items-center justify-center text-xs font-bold shrink-0 mt-0.5 ${
-                  selectedId === strategy.id ? "bg-amber-500 text-black" : "bg-white/10 text-white"
+                  selectedId === strategy.id ? "bg-primary text-on-primary" : "bg-surface-variant text-on-surface"
                 }`}>
                   {strategy.id}
                 </span>
                 <div>
                   <h3 className="font-bold text-sm leading-snug">{strategy.name}</h3>
-                  <p className="text-xs text-slate-400 mt-1 line-clamp-1">{strategy.tagline}</p>
+                  <p className="text-xs text-on-surface-variant mt-1 line-clamp-1">{strategy.tagline}</p>
                 </div>
               </button>
             ))}
@@ -290,43 +291,43 @@ export default function StrategiesPage() {
 
           {/* Right Content Details Panel */}
           <div className="lg:col-span-8">
-            <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-6 sm:p-8 backdrop-blur-md relative overflow-hidden min-h-[500px]">
+            <div className="rounded-xl glass-card p-6 sm:p-8 relative overflow-hidden min-h-[500px]">
               {/* Decorative top border glow */}
-              <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-amber-500/50 to-transparent" />
+              <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
               
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/10 pb-6 mb-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-outline-variant/30 pb-6 mb-6">
                 <div>
-                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-amber-500/20 bg-amber-500/5 text-amber-400 text-xs font-semibold uppercase tracking-wider mb-3">
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-primary/20 bg-primary/5 text-primary text-xs font-semibold uppercase tracking-wider mb-3">
                     Strategy #{activeStrategy.id}
                   </div>
-                  <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-white">
+                  <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-white font-playfair">
                     {activeStrategy.name}
                   </h2>
                 </div>
                 
                 {/* Timeframe Pill */}
                 <div className="shrink-0 flex flex-col items-start sm:items-end gap-1">
-                  <span className="text-xs text-slate-400">RECOMMENDED TIMEFRAME</span>
-                  <span className="bg-white/5 border border-white/10 px-3 py-1 rounded-lg text-sm font-bold text-slate-200">
+                  <span className="text-xs text-on-surface-variant">RECOMMENDED TIMEFRAME</span>
+                  <span className="bg-surface-variant border border-outline-variant/30 px-3 py-1 rounded-lg text-sm font-bold text-on-surface">
                     {activeStrategy.timeframe}
                   </span>
                 </div>
               </div>
 
               {/* Description */}
-              <p className="text-slate-300 text-base leading-relaxed mb-6">
+              <p className="text-on-surface-variant text-base leading-relaxed mb-6">
                 {activeStrategy.description}
               </p>
 
               {/* Indicators Used */}
-              <div className="mb-6 bg-white/[0.01] border border-white/5 rounded-xl p-4">
-                <h4 className="text-xs font-bold tracking-wider text-slate-400 uppercase mb-2 flex items-center gap-1.5">
-                  <Award className="h-4 w-4 text-amber-500" />
+              <div className="mb-6 glass-card rounded-xl p-4">
+                <h4 className="text-xs font-bold tracking-wider text-on-surface-variant uppercase mb-2 flex items-center gap-1.5">
+                  <Award className="h-4 w-4 text-primary" />
                   Key Indicators Used
                 </h4>
                 <div className="flex flex-wrap gap-2">
                   {activeStrategy.indicators.map((ind, i) => (
-                    <span key={i} className="text-xs bg-white/5 border border-white/10 rounded-full px-3 py-1 text-slate-200">
+                    <span key={i} className="text-xs bg-surface-variant border border-outline-variant/30 rounded-full px-3 py-1 text-on-surface">
                       {ind}
                     </span>
                   ))}
@@ -336,12 +337,12 @@ export default function StrategiesPage() {
               {/* Rules Grid */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                 {/* Buy Rules */}
-                <div className="border border-green-500/10 bg-green-500/[0.01] rounded-xl p-5">
-                  <h4 className="font-bold text-green-400 text-sm flex items-center gap-1.5 mb-3 border-b border-green-500/10 pb-2">
+                <div className="border border-[#26a69a]/20 bg-[#26a69a]/5 rounded-xl p-5">
+                  <h4 className="font-bold text-[#26a69a] text-sm flex items-center gap-1.5 mb-3 border-b border-[#26a69a]/20 pb-2">
                     <ArrowUpRight className="h-5 w-5" />
                     Buy Trigger Conditions
                   </h4>
-                  <ol className="list-decimal list-inside text-xs text-slate-300 space-y-2">
+                  <ol className="list-decimal list-inside text-xs text-on-surface-variant space-y-2">
                     {activeStrategy.buyRules.map((rule, idx) => (
                       <li key={idx} className="leading-relaxed pl-1">{rule}</li>
                     ))}
@@ -349,12 +350,12 @@ export default function StrategiesPage() {
                 </div>
 
                 {/* Sell Rules */}
-                <div className="border border-red-500/10 bg-red-500/[0.01] rounded-xl p-5">
-                  <h4 className="font-bold text-red-400 text-sm flex items-center gap-1.5 mb-3 border-b border-red-500/10 pb-2">
+                <div className="border border-[#ef5350]/20 bg-[#ef5350]/5 rounded-xl p-5">
+                  <h4 className="font-bold text-[#ef5350] text-sm flex items-center gap-1.5 mb-3 border-b border-[#ef5350]/20 pb-2">
                     <ArrowDownRight className="h-5 w-5" />
                     Sell Trigger Conditions
                   </h4>
-                  <ol className="list-decimal list-inside text-xs text-slate-300 space-y-2">
+                  <ol className="list-decimal list-inside text-xs text-on-surface-variant space-y-2">
                     {activeStrategy.sellRules.map((rule, idx) => (
                       <li key={idx} className="leading-relaxed pl-1">{rule}</li>
                     ))}
@@ -363,25 +364,25 @@ export default function StrategiesPage() {
               </div>
 
               {/* AI Forecast Confluence */}
-              <div className="border border-amber-500/30 bg-amber-500/10 rounded-xl p-5 flex items-start gap-4 mb-4 relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-[80px] h-[80px] bg-amber-500/5 rounded-full blur-[20px] pointer-events-none" />
-                <Sparkles className="h-6 w-6 text-amber-500 shrink-0 mt-0.5 animate-pulse" />
+              <div className="border border-primary/30 bg-primary/10 rounded-xl p-5 flex items-start gap-4 mb-4 relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-[80px] h-[80px] bg-primary/5 rounded-full blur-[20px] pointer-events-none" />
+                <Sparkles className="h-6 w-6 text-primary shrink-0 mt-0.5" />
                 <div>
-                  <h4 className="font-bold text-amber-400 text-sm mb-1.5 flex items-center gap-1.5">
+                  <h4 className="font-bold text-primary text-sm mb-1.5 flex items-center gap-1.5">
                     AI Forecast Confluence Rules
                   </h4>
-                  <p className="text-xs text-slate-300 leading-relaxed">
+                  <p className="text-xs text-on-surface-variant leading-relaxed">
                     {activeStrategy.aiConfluence}
                   </p>
                 </div>
               </div>
 
               {/* Risk Management */}
-              <div className="border border-white/10 bg-white/[0.01] rounded-xl p-5 flex items-start gap-4">
-                <ShieldAlert className="h-6 w-6 text-slate-400 shrink-0 mt-0.5" />
+              <div className="border border-outline-variant/30 glass-card rounded-xl p-5 flex items-start gap-4">
+                <ShieldAlert className="h-6 w-6 text-on-surface-variant shrink-0 mt-0.5" />
                 <div>
-                  <h4 className="font-bold text-slate-200 text-sm mb-1.5">Risk Management & Stop Placement</h4>
-                  <p className="text-xs text-slate-300 leading-relaxed">
+                  <h4 className="font-bold text-on-surface text-sm mb-1.5">Risk Management & Stop Placement</h4>
+                  <p className="text-xs text-on-surface-variant leading-relaxed">
                     {activeStrategy.riskManagement}
                   </p>
                 </div>
@@ -392,6 +393,7 @@ export default function StrategiesPage() {
 
         </div>
       </div>
+      <Footer />
     </div>
   );
 }

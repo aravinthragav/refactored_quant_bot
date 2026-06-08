@@ -1,5 +1,6 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 import datetime as dt
 import feedparser
 import pandas as pd
@@ -7,11 +8,16 @@ import yfinance as yf
 from forecast_engine import get_forecast_payload
 import math
 import socket
+import os
 
 # Set socket timeout to 3 seconds to prevent RSS feeds from hanging
 socket.setdefaulttimeout(3.0)
 
 app = FastAPI(title="AI Gold Forecast API")
+
+# Ensure charts directory exists
+os.makedirs("charts", exist_ok=True)
+app.mount("/charts", StaticFiles(directory="charts"), name="charts")
 
 app.add_middleware(
     CORSMiddleware,

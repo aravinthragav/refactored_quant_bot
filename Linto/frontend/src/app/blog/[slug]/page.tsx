@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { ArrowLeft, Calendar, User, BookOpen, Clock, Sparkles } from "lucide-react";
+import Footer from "@/components/Footer";
 
 interface BlogPost {
   id: number;
@@ -47,7 +48,7 @@ export default function BlogDetailPage() {
     return parts.map((part, i) => {
       if (part.startsWith("**") && part.endsWith("**")) {
         return (
-          <strong key={i} className="font-bold text-amber-300">
+          <strong key={i} className="font-bold text-primary">
             {part.slice(2, -2)}
           </strong>
         );
@@ -70,7 +71,7 @@ export default function BlogDetailPage() {
       if (trimmed.startsWith("# ")) {
         inList = false;
         elements.push(
-          <h1 key={index} className="text-3xl sm:text-4xl font-extrabold text-white mt-8 mb-4 border-b border-white/10 pb-3 tracking-tight">
+          <h1 key={index} className="text-3xl sm:text-4xl font-extrabold text-white mt-8 mb-4 border-b border-outline-variant/30 pb-3 tracking-tight font-playfair">
             {trimmed.slice(2)}
           </h1>
         );
@@ -81,7 +82,7 @@ export default function BlogDetailPage() {
       if (trimmed.startsWith("## ")) {
         inList = false;
         elements.push(
-          <h2 key={index} className="text-2xl font-bold text-white mt-8 mb-4 flex items-center gap-2 border-l-4 border-amber-500 pl-3">
+          <h2 key={index} className="text-2xl font-bold text-white mt-8 mb-4 flex items-center gap-2 border-l-4 border-primary pl-3 font-playfair">
             {trimmed.slice(3)}
           </h2>
         );
@@ -92,7 +93,7 @@ export default function BlogDetailPage() {
       if (trimmed.startsWith("### ")) {
         inList = false;
         elements.push(
-          <h3 key={index} className="text-xl font-bold text-slate-100 mt-6 mb-3">
+          <h3 key={index} className="text-xl font-bold text-on-surface mt-6 mb-3 font-playfair">
             {trimmed.slice(4)}
           </h3>
         );
@@ -105,7 +106,7 @@ export default function BlogDetailPage() {
           inList = true;
         }
         elements.push(
-          <ul key={index} className="list-disc list-inside text-slate-300 ml-4 mb-2 space-y-1">
+          <ul key={index} className="list-disc list-inside text-on-surface-variant ml-4 mb-2 space-y-1">
             <li className="leading-relaxed">{parseInlineFormatting(trimmed.slice(2))}</li>
           </ul>
         );
@@ -122,7 +123,7 @@ export default function BlogDetailPage() {
       // Regular paragraphs
       inList = false;
       elements.push(
-        <p key={index} className="text-slate-300 text-base leading-relaxed mb-4">
+        <p key={index} className="text-on-surface-variant text-base leading-relaxed mb-4">
           {parseInlineFormatting(trimmed)}
         </p>
       );
@@ -140,23 +141,23 @@ export default function BlogDetailPage() {
     : "";
 
   return (
-    <div className="min-h-screen bg-[#070b13] text-white selection:bg-amber-500/30 selection:text-amber-200 pb-20">
+    <div className="min-h-screen text-white selection:bg-primary/30 selection:text-gold-light pb-20" style={{ backgroundColor: "#06070a" }}>
       {/* Ambient glows */}
-      <div className="absolute top-0 left-10 w-[500px] h-[500px] bg-amber-500/5 rounded-full blur-[120px] pointer-events-none" />
-      <div className="absolute top-1/4 right-10 w-[600px] h-[600px] bg-blue-500/5 rounded-full blur-[150px] pointer-events-none" />
+      <div className="absolute top-0 left-10 w-[500px] h-[500px] bg-[rgba(212,175,55,0.05)] rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute top-1/4 right-10 w-[600px] h-[600px] bg-[rgba(33,150,243,0.04)] rounded-full blur-[150px] pointer-events-none" />
 
-      <div className="max-w-4xl mx-auto px-4 py-8 relative z-10">
+      <div className="w-full px-4 md:px-12 py-8 relative z-10">
         {/* Navigation */}
-        <header className="flex items-center justify-between mb-12 border-b border-white/10 pb-6">
+        <header className="flex items-center justify-between mb-12 border-b border-outline-variant/30 pb-6">
           <Link
             href="/blog"
-            className="flex items-center gap-2 text-sm text-slate-400 hover:text-white transition-colors duration-200 group"
+            className="flex items-center gap-2 text-sm text-on-surface-variant hover:text-white transition-colors duration-200 group"
           >
             <ArrowLeft className="h-4 w-4 transition-transform duration-200 group-hover:-translate-x-1" />
             Back to Journal
           </Link>
-          <div className="flex items-center gap-2 text-xs text-slate-400 bg-white/5 px-3 py-1 rounded-full border border-white/10">
-            <BookOpen className="h-3.5 w-3.5 text-amber-500" />
+          <div className="flex items-center gap-2 text-xs text-on-surface-variant bg-primary/5 px-3 py-1 rounded-full border border-primary/20">
+            <BookOpen className="h-3.5 w-3.5 text-primary" />
             AI Intelligence Report
           </div>
         </header>
@@ -169,36 +170,36 @@ export default function BlogDetailPage() {
             <div className="h-48 w-full bg-white/10 rounded mt-10" />
           </div>
         ) : post ? (
-          <article className="rounded-2xl border border-white/10 bg-white/[0.02] p-6 sm:p-10 backdrop-blur-md">
+          <article className="rounded-xl glass-card p-6 sm:p-10">
             {/* Tag/Category */}
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-amber-500/20 bg-amber-500/5 text-amber-400 text-xs font-semibold uppercase tracking-wider mb-6">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-primary/20 bg-primary/5 text-primary text-xs font-semibold uppercase tracking-wider mb-6">
               <Sparkles className="h-3 w-3" />
               Daily Spot Gold Analysis
             </div>
 
             {/* Title */}
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-white mb-6 leading-tight">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-white mb-6 leading-tight font-playfair">
               {post.title}
             </h1>
 
             {/* Meta data row */}
-            <div className="flex flex-wrap items-center gap-6 text-sm text-slate-400 mb-8 pb-8 border-b border-white/10">
+            <div className="flex flex-wrap items-center gap-6 text-sm text-on-surface-variant mb-8 pb-8 border-b border-outline-variant/30">
               <span className="flex items-center gap-2">
-                <Calendar className="h-4 w-4 text-amber-500" />
+                <Calendar className="h-4 w-4 text-primary" />
                 {formattedDate}
               </span>
               <span className="flex items-center gap-2">
-                <User className="h-4 w-4 text-amber-500" />
+                <User className="h-4 w-4 text-primary" />
                 {post.author}
               </span>
               <span className="flex items-center gap-2">
-                <Clock className="h-4 w-4 text-amber-500" />
+                <Clock className="h-4 w-4 text-primary" />
                 3 min read
               </span>
             </div>
 
             {/* Executive Summary Callout */}
-            <div className="border border-amber-500/20 bg-amber-500/5 rounded-xl p-5 mb-8 text-slate-200 text-base leading-relaxed italic">
+            <div className="border border-primary/20 bg-primary/5 rounded-xl p-5 mb-8 text-on-surface-variant text-base leading-relaxed italic">
               <strong>Report Summary:</strong> {post.summary}
             </div>
 
@@ -208,42 +209,43 @@ export default function BlogDetailPage() {
             </div>
 
             {/* Premium Broker CTA Banner */}
-            <div className="border border-amber-500/30 bg-amber-500/10 rounded-2xl p-6 backdrop-blur-md relative overflow-hidden flex flex-col sm:flex-row items-center justify-between gap-6 mt-10">
-              <div className="absolute top-0 right-0 w-[150px] h-[150px] bg-amber-500/10 rounded-full blur-[40px] pointer-events-none" />
+            <div className="border border-primary/30 bg-primary/10 rounded-xl p-6 backdrop-blur-md relative overflow-hidden flex flex-col sm:flex-row items-center justify-between gap-6 mt-10">
+              <div className="absolute top-0 right-0 w-[150px] h-[150px] bg-primary/10 rounded-full blur-[40px] pointer-events-none" />
               <div>
-                <h3 className="text-lg font-bold text-white mb-1.5 flex items-center gap-2">
-                  <Sparkles className="h-5 w-5 text-amber-500" />
+                <h3 className="text-lg font-bold text-white mb-1.5 flex items-center gap-2 font-playfair">
+                  <Sparkles className="h-5 w-5 text-primary" />
                   Ready to execute these signals?
                 </h3>
-                <p className="text-slate-300 text-xs sm:text-sm leading-relaxed max-w-xl">
+                <p className="text-on-surface-variant text-xs sm:text-sm leading-relaxed max-w-xl">
                   Trade Spot Gold (XAU/USD) with our recommended broker **Exness**. Experience raw spreads, 0% commissions, dynamic leverage, and instant deposit/withdrawal processing.
                 </p>
               </div>
               <a
-                href="/refer/exness"
+                href="https://one.exnessonelink.com/intl/en/a/thvdkhvd"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full sm:w-auto text-center shrink-0 px-6 py-3 bg-gradient-to-r from-amber-500 to-yellow-500 text-black text-sm font-bold rounded-xl hover:from-amber-400 hover:to-yellow-400 shadow-[0_0_20px_rgba(245,158,11,0.25)] hover:shadow-[0_0_25px_rgba(245,158,11,0.35)] transition-all duration-300"
+                className="w-full sm:w-auto text-center shrink-0 px-6 py-3 bg-primary hover:bg-gold-light text-on-primary text-sm font-bold rounded-xl shadow-[0_0_20px_rgba(212,175,55,0.25)] hover:shadow-[0_0_25px_rgba(212,175,55,0.35)] transition-all duration-300 premium-hover-btn no-underline"
               >
                 Trade on Exness
               </a>
             </div>
           </article>
         ) : (
-          <div className="text-center py-20 border border-white/10 bg-white/[0.01] rounded-2xl">
-            <h3 className="text-lg font-bold">Post not found</h3>
-            <p className="text-slate-400 text-sm mt-1">
+          <div className="text-center py-20 border border-outline-variant/30 glass-card rounded-xl">
+            <h3 className="text-lg font-bold font-playfair">Post not found</h3>
+            <p className="text-on-surface-variant text-sm mt-1">
               The article slug you requested could not be located in our archives.
             </p>
             <Link
               href="/blog"
-              className="mt-6 inline-flex items-center justify-center px-4 py-2 bg-amber-500 text-black text-sm font-bold rounded-xl hover:bg-amber-400 transition-colors"
+              className="mt-6 inline-flex items-center justify-center px-4 py-2 bg-primary text-on-primary text-sm font-bold rounded-xl hover:bg-gold-light transition-colors no-underline"
             >
               Return to Blog
             </Link>
           </div>
         )}
       </div>
+      <Footer />
     </div>
   );
 }

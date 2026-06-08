@@ -111,6 +111,9 @@ Support is established near **${daily_low:.2f}**, while key overhead resistance 
 
 ## AI Forecast Breakdown
 The deep learning model forecasts a target of **${forecast_price:.2f}**, reflecting a potential move of **{move_pct:.2f}%**. 
+
+![AI Gold Forecast Technical Chart](https://api.aigoldforecast.com/charts/{slug}.png)
+
 - **Sentiment Direction**: {direction}
 - **Target Target**: ${forecast_price:.2f}
 - **Uptime/Macro risk**: {macro["risk"]} (U.S. events multiplier at {macro["multiplier"]:.2f})
@@ -171,7 +174,7 @@ Requirements:
 2. Structure:
    - Executive Summary: A quick 3-sentence summary of today's price action.
    - Technical Analysis: Detail the EMA crossover signals (EMA 20 vs 89), support/resistance zones, and market volatility.
-   - AI Forecast Breakdown: Explain the deep learning model's forecasted path and prediction targets. Refer to it ONLY as the "OHLC-based gold-finetuned deep learning model" (Do NOT mention "Kronos").
+   - AI Forecast Breakdown: Explain the deep learning model's forecasted path and prediction targets. Refer to it ONLY as the "OHLC-based gold-finetuned deep learning model" (Do NOT mention "Kronos"). In this section, you MUST embed a markdown image of the technical chart. The markdown image URL must be exactly: https://api.aigoldforecast.com/charts/{slug}.png (replace "{slug}" in the URL with the exact slugified version of the title you generated).
    - Macroeconomic & News Sentiment: Analyze how the headlines and upcoming events will affect the dollar index and gold safe-haven appeal.
    - Professional Trade Recommendations: Give explicit trading rules (Buy/Sell directions, entries, take profit targets, stop loss recommendations based on ATR/volatility, and risk-to-reward ratio).
    - Recommended Execution (CTA): Add a short section titled "Recommended Execution" advising traders to execute these setups on our partner broker Exness for raw spreads, 0% commissions, and instant payouts. Include a markdown link to [Exness](https://aigoldforecast.com/refer/exness).
@@ -228,6 +231,17 @@ Return ONLY raw JSON, do not wrap it in markdown code blocks.
     # Save via helper and get post_id
     post_id = save_blog_post(title, slug, content, summary)
     
+    # Copy charts/GC=F.png to charts/{slug}.png
+    import shutil
+    src_chart = os.path.join(os.path.dirname(os.path.abspath(__file__)), "charts", "GC=F.png")
+    dest_chart = os.path.join(os.path.dirname(os.path.abspath(__file__)), "charts", f"{slug}.png")
+    if os.path.exists(src_chart):
+        try:
+            shutil.copy(src_chart, dest_chart)
+            print(f"Copied {src_chart} to {dest_chart} for blog post.")
+        except Exception as e:
+            print("Failed to copy chart:", e)
+            
     # Store the x_draft and status in the DB
     conn = get_connection()
     cursor = conn.cursor()
