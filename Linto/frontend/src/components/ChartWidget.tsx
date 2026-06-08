@@ -18,7 +18,7 @@ export default function ChartWidget({ data }: ChartWidgetProps) {
 
     const chart = createChart(chartContainerRef.current, {
       layout: {
-        background: { type: ColorType.Solid, color: "#0e1117" },
+        background: { type: ColorType.Solid, color: "#11131b" },
         textColor: "#d1d4dc",
       },
       grid: {

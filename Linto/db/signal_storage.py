@@ -87,6 +87,8 @@ def signal_exists(
     signal_hash
 ):
 
+    init_db()
+
     conn = sqlite3.connect(
         DB_FILE
     )
@@ -121,6 +123,8 @@ def save_signal(
     macro_risk,
     event_name
 ):
+
+    init_db()
 
     conn = sqlite3.connect(
         DB_FILE
@@ -217,6 +221,8 @@ def recent_similar_signal_exists(
     price_threshold_pct=0.35
 ):
 
+    init_db()
+
     conn = sqlite3.connect(
         DB_FILE
     )
@@ -277,6 +283,8 @@ def recent_similar_signal_exists(
 
 def get_open_signals():
 
+    init_db()
+
     conn = sqlite3.connect(
         DB_FILE
     )
@@ -304,6 +312,8 @@ def update_signal_status(
     status,
     result_pct
 ):
+
+    init_db()
 
     conn = sqlite3.connect(
         DB_FILE

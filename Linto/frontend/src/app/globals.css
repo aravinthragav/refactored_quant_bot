@@ -1,28 +1,61 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #11131b;
+  --foreground: #e1e1ed;
+  
+  --primary: #f2ca50;
+  --primary-container: #d4af37;
+  --on-primary: #3c2f00;
+  --on-primary-container: #554300;
+  
+  --secondary: #c9c6c5;
+  --on-secondary: #313030;
+  
+  --surface-container-lowest: #0c0e15;
+  --surface-container-low: #191b23;
+  --surface-container: #1d1f27;
+  --surface-container-high: #282a32;
+  --surface-container-highest: #33343d;
+  
+  --gold-light: #F1D592;
+  --gold-dark: #997A1C;
+  --surface-glass: rgba(26, 28, 36, 0.6);
+  --chart-blue: #229ED9;
+  
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --font-playfair: var(--font-playfair);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-primary: var(--primary);
+  --color-primary-container: var(--primary-container);
+  --color-on-primary: var(--on-primary);
+  --color-on-primary-container: var(--on-primary-container);
+  --color-secondary: var(--secondary);
+  --color-on-secondary: var(--on-secondary);
+  --color-surface-container-lowest: var(--surface-container-lowest);
+  --color-surface-container-low: var(--surface-container-low);
+  --color-surface-container: var(--surface-container);
+  --color-surface-container-high: var(--surface-container-high);
+  --color-surface-container-highest: var(--surface-container-highest);
+  --color-gold-light: var(--gold-light);
+  --color-gold-dark: var(--gold-dark);
+  --color-surface-glass: var(--surface-glass);
+  --color-chart-blue: var(--chart-blue);
+  
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+  --font-playfair: var(--font-playfair);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
 }
 
 @keyframes ticker-scroll {

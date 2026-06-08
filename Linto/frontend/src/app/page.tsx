@@ -54,40 +54,40 @@ export default function Home() {
   }, []);
 
   return (
-    <main className="min-h-screen bg-[#0e1117] text-white font-sans overflow-x-hidden pb-16">
+    <main className="min-h-screen bg-background text-foreground font-sans overflow-x-hidden pb-16">
       {/* Top Banner */}
-      <div className="flex flex-col sm:flex-row justify-between items-center gap-2 md:gap-4 bg-gradient-to-r from-[#06142c] to-[#0d1f44] p-3 md:p-6 mx-4 mt-3 rounded-xl border border-white/10 text-center sm:text-left">
+      <div className="flex flex-col sm:flex-row justify-between items-center gap-2 md:gap-4 bg-gradient-to-r from-surface-container-lowest to-surface-container p-3 md:p-6 mx-4 mt-3 rounded-xl border border-white/10 text-center sm:text-left">
         <div className="flex items-center justify-between w-full sm:w-auto">
           <div>
-            <h1 className="text-base sm:text-lg md:text-[32px] font-extrabold leading-tight">
+            <h1 className="text-base sm:text-lg md:text-[32px] font-playfair font-extrabold leading-tight">
               🟡 AI Gold Forecast Terminal
             </h1>
-            <div className="mt-1 hidden md:block text-xs md:text-sm text-gray-400">
+            <div className="mt-1 hidden md:block text-xs md:text-sm text-secondary">
               Smart Signals • Market Intelligence • Real-Time Forecasting
             </div>
           </div>
           {/* Mobile-only accuracy badge next to title */}
           <div className="sm:hidden flex flex-col items-end">
-            <span className="text-[10px] text-gray-400">Accuracy</span>
+            <span className="text-[10px] text-secondary">Accuracy</span>
             <span className="text-sm font-bold text-green-500">71.4%</span>
           </div>
         </div>
         <div className="flex flex-wrap items-center justify-between sm:justify-end gap-3 w-full sm:w-auto border-t border-white/5 pt-2 sm:pt-0 sm:border-t-0 mt-1 sm:mt-0">
           <div className="hidden sm:block text-right mr-3">
-            <div className="text-xs text-gray-400">30-Signal Accuracy</div>
+            <div className="text-xs text-secondary">30-Signal Accuracy</div>
             <div className="text-lg md:text-[28px] font-extrabold text-green-500 leading-none mt-0.5">
               71.4%
             </div>
           </div>
           <Link
             href="/strategies"
-            className="w-full sm:w-auto text-center no-underline border border-amber-500/25 bg-amber-500/10 px-3 py-1.5 md:px-5 md:py-2.5 rounded-lg text-amber-400 font-bold text-xs md:text-[15px] inline-block hover:bg-amber-500/20 transition-colors"
+            className="w-full sm:w-auto text-center no-underline bg-primary text-on-primary px-3 py-1.5 md:px-5 md:py-2.5 rounded-lg font-extrabold text-xs md:text-[15px] inline-block hover:shadow-[0_0_15px_rgba(242,202,80,0.5)] transition-all duration-300"
           >
             📖 Strategies
           </Link>
           <Link
             href="/blog"
-            className="w-full sm:w-auto text-center no-underline border border-white/10 bg-white/5 px-3 py-1.5 md:px-5 md:py-2.5 rounded-lg text-slate-200 font-bold text-xs md:text-[15px] inline-block hover:bg-white/10 transition-colors"
+            className="w-full sm:w-auto text-center no-underline border border-primary/30 bg-primary/5 px-3 py-1.5 md:px-5 md:py-2.5 rounded-lg text-primary font-bold text-xs md:text-[15px] inline-block hover:bg-primary/15 transition-all duration-300"
           >
             📰 Daily Blog
           </Link>
@@ -95,7 +95,7 @@ export default function Home() {
             href="https://t.me/tradingalertsAR"
             target="_blank"
             rel="noopener noreferrer"
-            className="w-full sm:w-auto text-center no-underline bg-[#229ED9] px-3 py-1.5 md:px-5 md:py-2.5 rounded-lg text-white font-bold text-xs md:text-[15px] inline-block hover:bg-[#1d8bcb] transition-colors"
+            className="w-full sm:w-auto text-center no-underline bg-chart-blue px-3 py-1.5 md:px-5 md:py-2.5 rounded-lg text-white font-bold text-xs md:text-[15px] inline-block hover:bg-chart-blue/80 transition-colors"
           >
             📢 Telegram
           </a>
@@ -115,7 +115,7 @@ export default function Home() {
       <div className="max-w-[1600px] mx-auto px-4 mt-4 md:mt-6">
         {loading ? (
           <div className="flex justify-center items-center h-[400px] md:h-[600px]">
-            <div className="text-xl text-gray-400 animate-pulse">Running AI Forecast Models...</div>
+            <div className="text-xl text-secondary animate-pulse">Running AI Forecast Models...</div>
           </div>
         ) : data ? (
           <>
@@ -123,7 +123,7 @@ export default function Home() {
             <div className="flex flex-col">
               {/* Layout with Ads & Chart */}
               <div className="order-1 md:order-2 flex gap-4 mb-4">
-                <div className="w-[15%] hidden lg:flex rounded-xl overflow-hidden border border-white/5 items-center justify-center min-h-[600px] bg-[#1a1c24]">
+                <div className="w-[15%] hidden lg:flex rounded-xl overflow-hidden border border-white/5 items-center justify-center min-h-[600px] bg-surface-glass backdrop-blur-md">
                   <a href="https://one.exnessonelink.com/intl/en/a/thvdkhvd" target="_blank" rel="noopener noreferrer" className="w-full">
                     <img src="https://d3dpet1g0ty5ed.cloudfront.net/EN_Take_control_300x600.png" className="w-full h-auto object-contain" alt="Exness Ad" />
                   </a>
@@ -133,7 +133,7 @@ export default function Home() {
                   <ChartWidget data={data} />
                 </div>
                 
-                <div className="w-[15%] hidden lg:flex rounded-xl overflow-hidden border border-white/5 items-center justify-center min-h-[600px] bg-[#1a1c24]">
+                <div className="w-[15%] hidden lg:flex rounded-xl overflow-hidden border border-white/5 items-center justify-center min-h-[600px] bg-surface-glass backdrop-blur-md">
                   <a href="https://one.exnessonelink.com/intl/en/a/thvdkhvd" target="_blank" rel="noopener noreferrer" className="w-full">
                     <img src="https://d3dpet1g0ty5ed.cloudfront.net/EN_Trading_Conditions_300x600px.gif" className="w-full h-auto object-contain" alt="Exness Ad" />
                   </a>
@@ -142,26 +142,26 @@ export default function Home() {
 
               {/* Metrics simple view: Horizontally scrollable on mobile, grid on desktop */}
               <div className="order-2 md:order-1 flex overflow-x-auto md:grid md:grid-cols-5 gap-3 md:gap-4 mb-4 pb-2 md:pb-0 scrollbar-none">
-                <div className="bg-[#1a1c24] p-3 md:p-4 rounded-xl border border-white/5 min-w-[125px] md:min-w-0 flex-1 flex flex-col justify-between">
-                  <div className="text-[11px] md:text-sm text-gray-400 mb-0.5 md:mb-1">Current</div>
+                <div className="bg-surface-glass backdrop-blur-md p-3 md:p-4 rounded-xl border border-white/5 min-w-[125px] md:min-w-0 flex-1 flex flex-col justify-between">
+                  <div className="text-[11px] md:text-sm text-secondary mb-0.5 md:mb-1">Current</div>
                   <div className="text-base md:text-2xl font-bold">{data.current_price?.toFixed(2)}</div>
                 </div>
-                <div className="bg-[#1a1c24] p-3 md:p-4 rounded-xl border border-white/5 min-w-[125px] md:min-w-0 flex-1 flex flex-col justify-between">
-                  <div className="text-[11px] md:text-sm text-gray-400 mb-0.5 md:mb-1">Forecast</div>
+                <div className="bg-surface-glass backdrop-blur-md p-3 md:p-4 rounded-xl border border-white/5 min-w-[125px] md:min-w-0 flex-1 flex flex-col justify-between">
+                  <div className="text-[11px] md:text-sm text-secondary mb-0.5 md:mb-1">Forecast</div>
                   <div className="text-base md:text-2xl font-bold">{data.forecast_price?.toFixed(2)}</div>
                 </div>
-                <div className="bg-[#1a1c24] p-3 md:p-4 rounded-xl border border-white/5 min-w-[125px] md:min-w-0 flex-1 flex flex-col justify-between">
-                  <div className="text-[11px] md:text-sm text-gray-400 mb-0.5 md:mb-1">Move %</div>
+                <div className="bg-surface-glass backdrop-blur-md p-3 md:p-4 rounded-xl border border-white/5 min-w-[125px] md:min-w-0 flex-1 flex flex-col justify-between">
+                  <div className="text-[11px] md:text-sm text-secondary mb-0.5 md:mb-1">Move %</div>
                   <div className="text-base md:text-2xl font-bold">{data.move_pct?.toFixed(2)}%</div>
                 </div>
-                <div className="bg-[#1a1c24] p-3 md:p-4 rounded-xl border border-white/5 min-w-[125px] md:min-w-0 flex-1 flex flex-col justify-between">
-                  <div className="text-[11px] md:text-sm text-gray-400 mb-0.5 md:mb-1">Direction</div>
-                  <div className={`text-base md:text-2xl font-bold ${data.direction === "LONG" ? "text-orange-500" : "text-blue-500"}`}>
+                <div className="bg-surface-glass backdrop-blur-md p-3 md:p-4 rounded-xl border border-white/5 min-w-[125px] md:min-w-0 flex-1 flex flex-col justify-between">
+                  <div className="text-[11px] md:text-sm text-secondary mb-0.5 md:mb-1">Direction</div>
+                  <div className={`text-base md:text-2xl font-extrabold ${data.direction === "LONG" ? "text-primary" : "text-chart-blue"}`}>
                     {data.direction === "LONG" ? "Bullish" : "Bearish"}
                   </div>
                 </div>
-                <div className="bg-[#1a1c24] p-3 md:p-4 rounded-xl border border-white/5 min-w-[125px] md:min-w-0 flex-1 flex flex-col justify-between">
-                  <div className="text-[11px] md:text-sm text-gray-400 mb-0.5 md:mb-1">MAE</div>
+                <div className="bg-surface-glass backdrop-blur-md p-3 md:p-4 rounded-xl border border-white/5 min-w-[125px] md:min-w-0 flex-1 flex flex-col justify-between">
+                  <div className="text-[11px] md:text-sm text-secondary mb-0.5 md:mb-1">MAE</div>
                   <div className="text-base md:text-2xl font-bold">{data.mae ? `${data.mae.toFixed(4)}%` : "N/A"}</div>
                 </div>
               </div>
