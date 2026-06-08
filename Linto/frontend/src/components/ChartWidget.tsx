@@ -51,7 +51,7 @@ export default function ChartWidget({ data }: ChartWidgetProps) {
           vertAlign: "center",
           lines: [
             {
-              text: isMarketClosed ? "Market Closed" : "AI GOLD FORECAST",
+              text: isMarketClosed ? "Market Closed" : "www.aigoldforecast.com",
               color: isMarketClosed ? "rgba(239, 83, 80, 0.15)" : "rgba(212, 175, 55, 0.06)",
               fontSize: isMarketClosed ? 64 : 72,
             },

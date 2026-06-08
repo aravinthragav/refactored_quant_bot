@@ -81,6 +81,20 @@ def generate_trade_chart(
         rr=rr
     )
 
+    # Add www.aigoldforecast.com watermark in the middle
+    ax.text(
+        0.5, 0.5, 'www.aigoldforecast.com',
+        transform=ax.transAxes,
+        color='white',
+        alpha=0.08,
+        fontsize=44,
+        fontweight='bold',
+        rotation=15,
+        ha='center',
+        va='center',
+        zorder=0
+    )
+
     forecast_x = range(
         len(plot_df),
         len(plot_df) + len(pred_df)
