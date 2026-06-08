@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, BookOpen, Compass, ShieldAlert, Award, ArrowUpRight, ArrowDownRight } from "lucide-react";
+import { ArrowLeft, BookOpen, Compass, ShieldAlert, Award, ArrowUpRight, ArrowDownRight, Sparkles } from "lucide-react";
 
 interface Strategy {
   id: number;
@@ -14,6 +14,7 @@ interface Strategy {
   buyRules: string[];
   sellRules: string[];
   riskManagement: string;
+  aiConfluence: string;
 }
 
 const strategies: Strategy[] = [
@@ -34,7 +35,8 @@ const strategies: Strategy[] = [
       "Price holds and closes below the crossover point on the confirmation candle.",
       "Enter a short position on the open of the next candle."
     ],
-    riskManagement: "Place the Stop Loss 15-20 pips ($1.50 - $2.00 in Gold) below the cross point for longs, or above it for shorts. Target a 1:1.5 or 1:2 Risk-to-Reward ratio."
+    riskManagement: "Place the Stop Loss 15-20 pips ($1.50 - $2.00 in Gold) below the cross point for longs, or above it for shorts. Target a 1:1.5 or 1:2 Risk-to-Reward ratio.",
+    aiConfluence: "Only enter the long crossover if the current AI Forecast direction is Bullish with a target price above the EMA 20. Conversely, only enter the short crossover if the model forecasts a Bearish target. If the AI forecasts an opposing move, the crossover is likely a fakeout."
   },
   {
     id: 2,
@@ -53,7 +55,8 @@ const strategies: Strategy[] = [
       "The current candle breaks out below the lower Donchian Channel boundary.",
       "The ATR value spikes above its 20-period average, validating the breakdown volume."
     ],
-    riskManagement: "Place the Stop Loss at the median line of the consolidation channel (usually 1.5x ATR). Trail the Stop Loss at the lower channel boundary as the trade moves in profit."
+    riskManagement: "Place the Stop Loss at the median line of the consolidation channel (usually 1.5x ATR). Trail the Stop Loss at the lower channel boundary as the trade moves in profit.",
+    aiConfluence: "Use the model's 60-minute forecast to confirm the breakout. If price breaks out to the upside and the model's forecast is Bullish (targeting equal to or greater than the upper band), execute the buy. Avoid breakouts that run counter to the AI's predicted direction."
   },
   {
     id: 3,
@@ -72,7 +75,8 @@ const strategies: Strategy[] = [
       "The Stochastic Oscillator rises above 80 (overbought) and prints a bearish %K/%D crossover.",
       "A bearish rejection candlestick (e.g. Shooting Star or Engulfing) forms at the resistance level."
     ],
-    riskManagement: "Place the Stop Loss 10 pips ($1.00) below the support zone for longs, or above the resistance zone for shorts. Target the opposite end of the range."
+    riskManagement: "Place the Stop Loss 10 pips ($1.00) below the support zone for longs, or above the resistance zone for shorts. Target the opposite end of the range.",
+    aiConfluence: "Before buying the bounce, check the model's forecast. Only buy at support if the AI forecasts a positive consolidation target or bullish trend. If the model indicates a strong breakdown/bearish target, do not attempt to buy support."
   },
   {
     id: 4,
@@ -91,7 +95,8 @@ const strategies: Strategy[] = [
       "RSI prints a lower high (LH) in the overbought region (over 70).",
       "Enter short when the price breaks below the low of the first bearish rejection candle."
     ],
-    riskManagement: "Place the Stop Loss just below the swing low for longs, or above the swing high for shorts. Target the nearest EMA 89 line or key pivot zone."
+    riskManagement: "Place the Stop Loss just below the swing low for longs, or above the swing high for shorts. Target the nearest EMA 89 line or key pivot zone.",
+    aiConfluence: "If a bullish RSI divergence forms, check if the model's prediction curve shows an upward trajectory in the next 12 candles. Entering when both the RSI divergence and the deep learning model signal a concurrent pivot maximizes reversal success rates."
   },
   {
     id: 5,
@@ -110,7 +115,8 @@ const strategies: Strategy[] = [
       "MACD histogram is above the zero line and prints at least three consecutive shrinking green bars.",
       "Enter short when the histogram color shifts or crosses back towards the zero line."
     ],
-    riskManagement: "Place the Stop Loss 12 pips below the recent swing low. Take partial profits at a 1:1 Risk-to-Reward ratio, and let the remaining run with a break-even stop."
+    riskManagement: "Place the Stop Loss 12 pips below the recent swing low. Take partial profits at a 1:1 Risk-to-Reward ratio, and let the remaining run with a break-even stop.",
+    aiConfluence: "Match the histogram reversal direction with the model's forecast. If the histogram shows declining bearish momentum and the model outputs a bullish forecast for the upcoming 60 minutes, execute the long trade."
   },
   {
     id: 6,
@@ -131,7 +137,8 @@ const strategies: Strategy[] = [
       "Wait for the price to pull back to the 50% or 61.8% retracement level.",
       "Enter short when a bearish confirmation candle appears at the Fibonacci zone."
     ],
-    riskManagement: "Stop Loss is placed below the 78.6% retracement level. Take Profit targets are the 0% level (recent high/low) and the -27% Fibonacci extension."
+    riskManagement: "Stop Loss is placed below the 78.6% retracement level. Take Profit targets are the 0% level (recent high/low) and the -27% Fibonacci extension.",
+    aiConfluence: "During a pullback, verify that the model's forecast target aligns with a continuation of the trend. If a pullback to the 61.8% level occurs and the model's next-session target lies at or above the previous swing high, enter buy limits with high confidence."
   },
   {
     id: 7,
@@ -150,7 +157,8 @@ const strategies: Strategy[] = [
       "A strong bearish candle breaks out and closes completely below the lower Bollinger Band.",
       "Enter short immediately on the close of the breakout candle."
     ],
-    riskManagement: "Place the Stop Loss on the opposite side of the median Bollinger Band (20 SMA). Trail the Stop Loss at the median band as the trend develops."
+    riskManagement: "Place the Stop Loss on the opposite side of the median Bollinger Band (20 SMA). Trail the Stop Loss at the median band as the trend develops.",
+    aiConfluence: "During a band squeeze, inspect the model's forecasted path. If the bands squeeze tightly and the model predicts a strong expansion move, you can place pending stop orders in the direction of the forecast prior to the actual breakout candle close."
   },
   {
     id: 8,
@@ -169,7 +177,8 @@ const strategies: Strategy[] = [
       "On the 5-minute chart, wait for the price to rally above the 5m EMA 20.",
       "Enter short when the price crosses back below the 5m EMA 20 with a strong bearish candle."
     ],
-    riskManagement: "Place Stop Loss at the recent swing low on the 5m chart. Target 2 to 3 times the risk amount by trailing profit via the 5m EMA 20 line."
+    riskManagement: "Place Stop Loss at the recent swing low on the 5m chart. Target 2 to 3 times the risk amount by trailing profit via the 5m EMA 20 line.",
+    aiConfluence: "Align the 4H structural bias with the 5-minute model output. If H4 price is above the H4 EMA 89 (Bullish structural bias), only enter long trades when the 5-minute model's directional output is Bullish. Skip all counter-trend signals."
   },
   {
     id: 9,
@@ -188,7 +197,8 @@ const strategies: Strategy[] = [
       "Identify the high and low of the range established over the last 30 minutes.",
       "Place a Sell Stop order 5 pips ($0.50) below the range low, 2 minutes before the release."
     ],
-    riskManagement: "Place the Stop Loss for each order at the opposite side of the pre-news range. Once one order triggers, immediately cancel the other order. Set a take profit target of 1:2 Risk-to-Reward."
+    riskManagement: "Place the Stop Loss for each order at the opposite side of the pre-news range. Once one order triggers, immediately cancel the other order. Set a take profit target of 1:2 Risk-to-Reward.",
+    aiConfluence: "Compare macro news schedules with the model's confidence rating. If the confidence rating drops below 50% due to upcoming high-impact news, use the straddle pending orders. If confidence remains high (>80%), favor the model's forecasted direction with standard limit entries."
   },
   {
     id: 10,
@@ -207,7 +217,8 @@ const strategies: Strategy[] = [
       "At the session open, wait for a 5-minute candle to break and close below the range low.",
       "Enter short on the close of the breakout candle."
     ],
-    riskManagement: "Stop Loss is placed at the midpoint of the pre-session range. Take Profit should be set to 1.5 times the range height."
+    riskManagement: "Stop Loss is placed at the midpoint of the pre-session range. Take Profit should be set to 1.5 times the range height.",
+    aiConfluence: "Check the model's forecast at the session open. If the New York open breaks the range high and the model predicts a bullish extension for the next 60 minutes, enter long with high confidence. If the breakout contradicts the model forecast, expect a fakeout."
   }
 ];
 
@@ -323,7 +334,7 @@ export default function StrategiesPage() {
               </div>
 
               {/* Rules Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                 {/* Buy Rules */}
                 <div className="border border-green-500/10 bg-green-500/[0.01] rounded-xl p-5">
                   <h4 className="font-bold text-green-400 text-sm flex items-center gap-1.5 mb-3 border-b border-green-500/10 pb-2">
@@ -351,11 +362,25 @@ export default function StrategiesPage() {
                 </div>
               </div>
 
-              {/* Risk Management */}
-              <div className="border border-amber-500/20 bg-amber-500/5 rounded-xl p-5 flex items-start gap-4">
-                <ShieldAlert className="h-6 w-6 text-amber-500 shrink-0 mt-0.5" />
+              {/* AI Forecast Confluence */}
+              <div className="border border-amber-500/30 bg-amber-500/10 rounded-xl p-5 flex items-start gap-4 mb-4 relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-[80px] h-[80px] bg-amber-500/5 rounded-full blur-[20px] pointer-events-none" />
+                <Sparkles className="h-6 w-6 text-amber-500 shrink-0 mt-0.5 animate-pulse" />
                 <div>
-                  <h4 className="font-bold text-amber-400 text-sm mb-1.5">Risk Management & Stop Placement</h4>
+                  <h4 className="font-bold text-amber-400 text-sm mb-1.5 flex items-center gap-1.5">
+                    AI Forecast Confluence Rules
+                  </h4>
+                  <p className="text-xs text-slate-300 leading-relaxed">
+                    {activeStrategy.aiConfluence}
+                  </p>
+                </div>
+              </div>
+
+              {/* Risk Management */}
+              <div className="border border-white/10 bg-white/[0.01] rounded-xl p-5 flex items-start gap-4">
+                <ShieldAlert className="h-6 w-6 text-slate-400 shrink-0 mt-0.5" />
+                <div>
+                  <h4 className="font-bold text-slate-200 text-sm mb-1.5">Risk Management & Stop Placement</h4>
                   <p className="text-xs text-slate-300 leading-relaxed">
                     {activeStrategy.riskManagement}
                   </p>

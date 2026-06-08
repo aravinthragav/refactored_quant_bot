@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import Link from "next/link";
 import ChartWidget from "@/components/ChartWidget";
 import NewsTicker from "@/components/NewsTicker";
 import SignalBanner from "@/components/SignalBanner";
@@ -71,13 +72,25 @@ export default function Home() {
             <span className="text-sm font-bold text-green-500">71.4%</span>
           </div>
         </div>
-        <div className="flex flex-row items-center justify-between sm:justify-end gap-3 w-full sm:w-auto border-t border-white/5 pt-2 sm:pt-0 sm:border-t-0 mt-1 sm:mt-0">
-          <div className="hidden sm:block text-right">
+        <div className="flex flex-wrap items-center justify-between sm:justify-end gap-3 w-full sm:w-auto border-t border-white/5 pt-2 sm:pt-0 sm:border-t-0 mt-1 sm:mt-0">
+          <div className="hidden sm:block text-right mr-3">
             <div className="text-xs text-gray-400">30-Signal Accuracy</div>
             <div className="text-lg md:text-[28px] font-extrabold text-green-500 leading-none mt-0.5">
               71.4%
             </div>
           </div>
+          <Link
+            href="/strategies"
+            className="w-full sm:w-auto text-center no-underline border border-amber-500/25 bg-amber-500/10 px-3 py-1.5 md:px-5 md:py-2.5 rounded-lg text-amber-400 font-bold text-xs md:text-[15px] inline-block hover:bg-amber-500/20 transition-colors"
+          >
+            📖 Playbook
+          </Link>
+          <Link
+            href="/blog"
+            className="w-full sm:w-auto text-center no-underline border border-white/10 bg-white/5 px-3 py-1.5 md:px-5 md:py-2.5 rounded-lg text-slate-200 font-bold text-xs md:text-[15px] inline-block hover:bg-white/10 transition-colors"
+          >
+            📰 Daily Blog
+          </Link>
           <a
             href="https://t.me/tradingalertsAR"
             target="_blank"
