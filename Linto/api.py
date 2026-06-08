@@ -338,6 +338,170 @@ def get_active_signal(symbol: str = "GC=F"):
 def get_news(asset_name: str = "GOLD"):
     return {"success": True, "headlines": get_news_headlines(asset_name)}
 
+# =========================================================
+# BLOG ENGINE ENDPOINTS
+# =========================================================
+
+@app.get("/api/blog")
+def get_blog_posts():
+    try:
+        from db.blog_storage import get_all_posts
+        posts = get_all_posts()
+        return {"success": True, "posts": posts}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/blog/{slug}")
+def get_blog_post(slug: str):
+    try:
+        from db.blog_storage import get_post_by_slug
+        post = get_post_by_slug(slug)
+        if not post:
+            raise HTTPException(status_code=404, detail="Blog post not found")
+        return {"success": True, "post": post}
+    except HTTPException as he:
+        raise he
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+# =========================================================
+# TWITTER/X POSTING HELPER
+# =========================================================
+
+def post_to_twitter(text: str):
+    import os
+    import requests
+    
+    api_key = os.environ.get("TWITTER_API_KEY")
+    api_secret = os.environ.get("TWITTER_API_SECRET")
+    access_token = os.environ.get("TWITTER_ACCESS_TOKEN")
+    access_token_secret = os.environ.get("TWITTER_ACCESS_TOKEN_SECRET")
+    
+    if not all([api_key, api_secret, access_token, access_token_secret]):
+        try:
+            print(f"Twitter keys missing. Logging tweet to file: {text}")
+        except UnicodeEncodeError:
+            print(f"Twitter keys missing. Logging tweet to file: {text.encode('ascii', 'replace').decode('ascii')}")
+        log_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "tweets.log")
+        with open(log_path, "a", encoding="utf-8") as f:
+            f.write(f"[{dt.datetime.now().isoformat()}] {text}\n")
+        return True, "Twitter API keys not set. Draft tweet logged to tweets.log locally."
+        
+    try:
+        from requests_oauthlib import OAuth1Session
+        twitter = OAuth1Session(api_key, client_secret=api_secret, resource_owner_key=access_token, resource_owner_secret=access_token_secret)
+        response = twitter.post("https://api.twitter.com/2/tweets", json={"text": text})
+        if response.status_code == 201:
+            return True, "Successfully posted to Twitter!"
+        else:
+            return False, f"Twitter API error ({response.status_code}): {response.text}"
+    except Exception as e:
+        return False, f"Twitter post exception: {str(e)}"
+
+# =========================================================
+# TELEGRAM AND GITHUB WEBHOOKS
+# =========================================================
+
+@app.post("/api/telegram-webhook")
+async def telegram_webhook(update: dict):
+    import requests
+    import os
+    
+    token = os.environ.get("TELEGRAM_BOT_TOKEN", "8704963574:AAGOZoYjiqSPkF-FQIuuvTsUYTPgF0fPmsk")
+    
+    if "callback_query" in update:
+        cq = update["callback_query"]
+        data = cq["data"]
+        msg = cq.get("message", {})
+        chat_id = msg.get("chat", {}).get("id")
+        message_id = msg.get("message_id")
+        
+        # Acknowledge the callback query to Telegram
+        try:
+            requests.post(f"https://api.telegram.org/bot{token}/answerCallbackQuery", json={"callback_query_id": cq["id"]}, timeout=5)
+        except:
+            pass
+            
+        if data.startswith("approve_x:"):
+            post_id = int(data.replace("approve_x:", ""))
+            from db.blog_storage import get_connection
+            conn = get_connection()
+            cursor = conn.cursor()
+            cursor.execute("SELECT x_draft, x_status FROM blog_posts WHERE id = ?", (post_id,))
+            row = cursor.fetchone()
+            
+            if row:
+                x_draft, x_status = row[0], row[1]
+                if x_status == 'APPROVED':
+                    new_text = f"Already approved and posted to X! ✅\n\n```\n{x_draft}\n```"
+                else:
+                    success, message = post_to_twitter(x_draft)
+                    if success:
+                        cursor.execute("UPDATE blog_posts SET x_status = 'APPROVED' WHERE id = ?", (post_id,))
+                        new_text = f"Approved and posted to X! ✅\n\n```\n{x_draft}\n```\n\n_{message}_"
+                    else:
+                        new_text = f"Failed to post to X! ❌\nError: {message}\n\n```\n{x_draft}\n```"
+            else:
+                new_text = "Draft post not found in database."
+                
+            conn.commit()
+            conn.close()
+            
+            # Update the original Telegram message in-place
+            try:
+                requests.post(f"https://api.telegram.org/bot{token}/editMessageText", json={
+                    "chat_id": chat_id,
+                    "message_id": message_id,
+                    "text": new_text,
+                    "parse_mode": "Markdown"
+                }, timeout=5)
+            except Exception as e:
+                print("Telegram edit failed:", e)
+                
+        elif data.startswith("reject_x:"):
+            post_id = int(data.replace("reject_x:", ""))
+            from db.blog_storage import get_connection
+            conn = get_connection()
+            cursor = conn.cursor()
+            cursor.execute("SELECT x_draft FROM blog_posts WHERE id = ?", (post_id,))
+            row = cursor.fetchone()
+            x_draft = row[0] if row else ""
+            cursor.execute("UPDATE blog_posts SET x_status = 'REJECTED' WHERE id = ?", (post_id,))
+            conn.commit()
+            conn.close()
+            
+            new_text = f"Post rejected! ❌\n\n```\n{x_draft}\n```"
+            try:
+                requests.post(f"https://api.telegram.org/bot{token}/editMessageText", json={
+                    "chat_id": chat_id,
+                    "message_id": message_id,
+                    "text": new_text,
+                    "parse_mode": "Markdown"
+                }, timeout=5)
+            except Exception as e:
+                print("Telegram edit failed:", e)
+                
+    return {"ok": True}
+
+@app.post("/api/github-webhook")
+async def github_webhook():
+    import subprocess
+    import os
+    script_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "scripts", "deploy.sh")
+    if not os.path.exists(script_path):
+        script_path = "/home/ubuntu/refactored_quant_bot/Linto/scripts/deploy.sh"
+        
+    print(f"Executing GitHub Webhook Auto-Deploy: {script_path}")
+    try:
+        if os.path.exists(script_path):
+            # Run asynchronously
+            subprocess.Popen(["bash", script_path], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            return {"success": True, "message": "GitHub deployment triggered successfully."}
+        else:
+            return {"success": False, "message": "Auto-deploy script (deploy.sh) not found."}
+    except Exception as e:
+        return {"success": False, "detail": str(e)}
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)
