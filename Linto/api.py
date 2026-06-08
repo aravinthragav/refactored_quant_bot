@@ -1,0 +1,268 @@
+from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+import datetime as dt
+import feedparser
+import pandas as pd
+import yfinance as yf
+from forecast_engine import get_forecast_payload
+import math
+
+app = FastAPI(title="AI Gold Forecast API")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+def get_news_headlines(asset_name):
+    feeds = []
+    if asset_name == "BTC":
+        feeds = ["https://www.coindesk.com/arc/outboundfeeds/rss/", "https://cointelegraph.com/rss"]
+    else:
+        feeds = [
+            "https://www.reutersagency.com/feed/?best-topics=commodities",
+            "https://www.investing.com/rss/news_25.rss",
+            "https://www.fxstreet.com/rss/news",
+            "https://www.kitco.com/rss/news",
+            "https://www.mining.com/feed/",
+            "https://feeds.content.dowjones.io/public/rss/mw_marketpulse",
+            "https://finance.yahoo.com/news/rssindex",
+            "https://www.cnbc.com/id/100003114/device/rss/rss.html",
+            "https://www.federalreserve.gov/feeds/press_all.xml",
+            "https://www.imf.org/en/News/RSS"
+        ]
+
+    headlines = []
+    for url in feeds:
+        try:
+            feed = feedparser.parse(url)
+            for entry in feed.entries[:5]:
+                title = entry.title.replace("&amp;", "&")
+                headlines.append(title)
+        except Exception as e:
+            pass
+
+    headlines = list(dict.fromkeys(headlines))
+    if not headlines:
+        headlines = [
+            "Markets monitoring Fed commentary",
+            "Gold traders watching bond yields",
+            "Macro uncertainty driving safe-haven flows"
+        ]
+    return headlines[:10]
+
+def get_sr_levels(ticker, current_price):
+    levels = []
+    timeframes = [
+        ("15m", "15m", "7d"),
+        ("30m", "30m", "14d"),
+        ("1H", "60m", "30d"),
+        ("4H", "4h", "90d"),
+        ("D", "1d", "180d"),
+        ("W", "1wk", "2y"),
+        ("M", "1mo", "5y")
+    ]
+    for label, interval, period in timeframes:
+        try:
+            htf = yf.download(ticker, interval=interval, period=period, progress=False, auto_adjust=False)
+            if htf.empty: continue
+            if isinstance(htf.columns, pd.MultiIndex):
+                htf.columns = [c[0] for c in htf.columns]
+            
+            recent_high = htf['High'].tail(20).max()
+            recent_low = htf['Low'].tail(20).min()
+            
+            levels.append({"tf": label, "type": "R", "price": float(recent_high)})
+            levels.append({"tf": label, "type": "S", "price": float(recent_low)})
+        except Exception:
+            pass
+
+    filtered = []
+    for lvl in levels:
+        if math.isnan(lvl["price"]): continue
+        distance_pct = abs(lvl["price"] - current_price) / current_price * 100
+        if distance_pct <= 6.0:
+            filtered.append(lvl)
+
+    # Group and merge S/R levels that are within 0.15% of each other
+    levels_R = sorted([l for l in filtered if l["type"] == "R"], key=lambda x: x["price"])
+    levels_S = sorted([l for l in filtered if l["type"] == "S"], key=lambda x: x["price"])
+
+    def merge_levels(lvl_list):
+        if not lvl_list:
+            return []
+        merged = []
+        current = lvl_list[0]
+        for next_lvl in lvl_list[1:]:
+            if abs(next_lvl["price"] - current["price"]) / current["price"] * 100 <= 0.15:
+                # Merge: combine timeframes
+                tfs = current["tf"].split("/") + next_lvl["tf"].split("/")
+                order_map = {"15m": 0, "30m": 1, "1H": 2, "4H": 3, "D": 4, "W": 5, "M": 6}
+                unique_tfs = sorted(list(set(tfs)), key=lambda x: order_map.get(x, 99))
+                current["tf"] = "/".join(unique_tfs)
+                # Set price to average
+                current["price"] = (current["price"] + next_lvl["price"]) / 2
+            else:
+                merged.append(current)
+                current = next_lvl
+        merged.append(current)
+        return merged
+
+    merged_R = merge_levels(levels_R)
+    merged_S = merge_levels(levels_S)
+    return merged_R + merged_S
+
+@app.get("/api/forecast")
+def get_forecast(ticker: str = "GC=F", asset_name: str = "GOLD", lookback: int = 256, pred_len: int = 12):
+    try:
+        config = {
+            "ticker": ticker,
+            "interval": "5m",
+            "lookback": lookback,
+            "pred_len": pred_len
+        }
+        payload = get_forecast_payload(config)
+        
+        # Format DataFrames for JSON response
+        x_timestamp = payload["x_timestamp"]
+        x_df = payload["x_df"]
+        pred_df = payload["pred_df"]
+        y_timestamp = payload["y_timestamp"]
+        df = payload["df"]
+        
+        hist_data = []
+        for i in range(len(x_df)):
+            hist_data.append({
+                "time": int(x_timestamp.iloc[i].timestamp()),
+                "open": float(x_df['open'].iloc[i]),
+                "high": float(x_df['high'].iloc[i]),
+                "low": float(x_df['low'].iloc[i]),
+                "close": float(x_df['close'].iloc[i])
+            })
+            
+        forecast_data = []
+        # Connect to last hist candle
+        forecast_data.append({
+            "time": int(x_timestamp.iloc[-1].timestamp()),
+            "value": float(x_df['close'].iloc[-1])
+        })
+        for i in range(len(pred_df)):
+            forecast_data.append({
+                "time": int(y_timestamp.iloc[i].timestamp()),
+                "value": float(pred_df['close'].iloc[i])
+            })
+            
+        ema20_data = []
+        ema20_series = df['ema20'].tail(lookback)
+        for i in range(len(ema20_series)):
+            val = ema20_series.iloc[i]
+            if not math.isnan(val):
+                ema20_data.append({
+                    "time": int(x_timestamp.iloc[i].timestamp()),
+                    "value": float(val)
+                })
+                
+        ema89_data = []
+        ema89_series = df['ema89_median'].tail(lookback)
+        for i in range(len(ema89_series)):
+            val = ema89_series.iloc[i]
+            if not math.isnan(val):
+                ema89_data.append({
+                    "time": int(x_timestamp.iloc[i].timestamp()),
+                    "value": float(val)
+                })
+
+        sr_levels = get_sr_levels(ticker, payload["current_price"])
+
+        # Calculate MAE if possible
+        mae = None
+        try:
+            actual = df['close'].tail(pred_len).values
+            predicted = pred_df['close'].values[:len(actual)]
+            mae = float(sum(abs(actual - predicted)) / len(actual))
+        except:
+            pass
+
+        is_weekend = dt.datetime.now().weekday() in [5, 6]
+
+        return {
+            "success": True,
+            "asset_name": asset_name,
+            "current_price": float(payload["current_price"]),
+            "forecast_price": float(payload["forecast_price"]),
+            "move_pct": float(payload["move_pct"]),
+            "direction": payload["direction"],
+            "hist_data": hist_data,
+            "forecast_data": forecast_data,
+            "ema20_data": ema20_data,
+            "ema89_data": ema89_data,
+            "sr_levels": sr_levels,
+            "mae": mae,
+            "market_closed": is_weekend if asset_name == "GOLD" else False
+        }
+
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/active-signal")
+def get_active_signal(symbol: str = "GC=F"):
+    try:
+        from db.signal_storage import get_open_signals
+        signals = get_open_signals()
+        symbol_signals = [s for s in signals if s["symbol"] == symbol]
+        if symbol_signals:
+            latest = sorted(symbol_signals, key=lambda x: x["id"])[-1]
+            
+            # Check if stale (> 60 minutes)
+            try:
+                from datetime import datetime, timezone
+                created_at = datetime.fromisoformat(latest["created_at"])
+                if created_at.tzinfo is None:
+                    created_at = created_at.replace(tzinfo=timezone.utc)
+                now_utc = datetime.now(timezone.utc)
+                elapsed_minutes = (now_utc - created_at).total_seconds() / 60
+                if elapsed_minutes > 60:
+                    return {
+                        "success": True,
+                        "has_signal": False,
+                        "signal": None
+                    }
+            except Exception as e:
+                print("Error verifying signal freshness:", e)
+
+            return {
+                "success": True,
+                "has_signal": True,
+                "signal": {
+                    "id": latest["id"],
+                    "symbol": latest["symbol"],
+                    "direction": latest["direction"],
+                    "entry_price": latest["entry_price"],
+                    "tp_price": latest["tp_price"],
+                    "sl_price": latest["sl_price"],
+                    "forecast_price": latest["forecast_price"],
+                    "move_pct": latest["move_pct"],
+                    "confidence": latest["confidence"],
+                    "created_at": latest["created_at"]
+                }
+            }
+        return {
+            "success": True,
+            "has_signal": False,
+            "signal": None
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/news")
+def get_news(asset_name: str = "GOLD"):
+    return {"success": True, "headlines": get_news_headlines(asset_name)}
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)

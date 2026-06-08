@@ -2,6 +2,7 @@ import time
 import traceback
 import subprocess
 import sys
+import datetime as dt
 
 from asset_configs import ASSETS
 import os
@@ -63,6 +64,10 @@ while True:
         for asset_name, config in ASSETS.items():
 
             try:
+                # Skip GOLD forecasting and signals on weekends (Saturday=5, Sunday=6)
+                if asset_name == "GOLD" and dt.datetime.now().weekday() in [5, 6]:
+                    print("GOLD market is closed (Weekend). Skipping forecasting/signals.")
+                    continue
 
                 print(f"Processing {asset_name}")
                 send_session_briefings()

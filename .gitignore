@@ -1,0 +1,25 @@
+# Compiled python modules
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Databases
+*.db
+*.sqlite3
+
+# Virtual environments
+venv/
+env/
+ENV/
+
+# Temporary reports
+report.html
+report.json
+cache/
+
+# Local env files
+.env.local
+.env.production
+.env.development
+.env

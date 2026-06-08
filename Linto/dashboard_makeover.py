@@ -693,18 +693,34 @@ direction = payload["direction"]
 
 confidence = payload["confidence"]
 
-show_signal_banner(
+# Show signal banner only if an open signal exists in the database and is not stale (< 60m)
+from db.signal_storage import get_open_signals
+open_signals = get_open_signals()
+asset_open_signals = [s for s in open_signals if s["symbol"] == ticker]
+if asset_open_signals:
+    latest_sig = sorted(asset_open_signals, key=lambda x: x["id"])[-1]
+    
+    # Check if signal is stale (> 60 minutes)
+    try:
+        from datetime import datetime, timezone
+        created_at = datetime.fromisoformat(latest_sig["created_at"])
+        if created_at.tzinfo is None:
+            created_at = created_at.replace(tzinfo=timezone.utc)
+        now_utc = datetime.now(timezone.utc)
+        elapsed_minutes = (now_utc - created_at).total_seconds() / 60
+        is_stale = elapsed_minutes > 60
+    except Exception:
+        is_stale = True
 
-    asset_name,
-
-    direction,
-
-    current_price,
-
-    forecast_price,
-
-    move_pct
-)
+    if not is_stale:
+        sig_direction = "LONG" if "Bullish" in latest_sig["direction"] else "SHORT"
+        show_signal_banner(
+            asset_name=asset_name,
+            direction=sig_direction,
+            current_price=latest_sig["entry_price"],
+            forecast_price=latest_sig["forecast_price"],
+            move_pct=latest_sig["move_pct"]
+        )
 # =========================================================
 # SR LEVELS
 # =========================================================

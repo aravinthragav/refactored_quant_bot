@@ -9,6 +9,8 @@ from telegram_sender import (
     send_message
 )
 
+from asset_configs import ASSETS
+
 LAST_SESSION_ALERT = {}
 
 SESSIONS = {
@@ -45,10 +47,10 @@ def send_session_briefings():
             session_key
         ] = True
 
-        for asset in [
-            "BTC",
-            "GOLD"
-        ]:
+        for asset in ASSETS.keys():
+            # Skip GOLD session briefings on weekends (Saturday=5, Sunday=6)
+            if asset == "GOLD" and dt.datetime.now().weekday() in [5, 6]:
+                continue
 
             articles = fetch_news(asset)
 
