@@ -265,8 +265,8 @@ Return ONLY raw JSON, do not wrap it in markdown code blocks.
     
     print(f"Blog post saved successfully! ID: {post_id}, Slug: {slug}")
     
-    # 4. Send draft to Telegram for approval
-    send_telegram_approval(post_id, x_draft)
+    # 4. Send draft to Telegram for approval (Disabled: posting to X requires subscription)
+    # send_telegram_approval(post_id, x_draft)
     return slug
 
 def send_telegram_approval(post_id, x_draft):
