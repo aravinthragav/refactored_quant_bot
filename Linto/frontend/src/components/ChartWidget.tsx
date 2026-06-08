@@ -165,10 +165,13 @@ export default function ChartWidget({ data }: ChartWidgetProps) {
     <div className="glass-card rounded-xl overflow-hidden">
       {/* Chart Header */}
       <div className="flex justify-between items-center px-4 py-3 border-b border-outline-variant/30">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 flex-wrap">
           <span className="font-playfair text-base md:text-lg font-bold gold-shimmer-text">GOLD / USD</span>
           <span className="px-2 py-0.5 bg-surface-container-high rounded text-[10px] font-bold border border-outline-variant/30 text-on-surface-variant">
             5M INTERVAL
+          </span>
+          <span className="text-[10px] text-secondary/70 font-semibold">
+            • Auto refreshes every 5 minutes
           </span>
         </div>
         <div className="flex items-center gap-2 text-[10px] text-on-surface-variant font-semibold">
