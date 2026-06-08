@@ -6,6 +6,10 @@ import pandas as pd
 import yfinance as yf
 from forecast_engine import get_forecast_payload
 import math
+import socket
+
+# Set socket timeout to 3 seconds to prevent RSS feeds from hanging
+socket.setdefaulttimeout(3.0)
 
 app = FastAPI(title="AI Gold Forecast API")
 
@@ -17,7 +21,17 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+news_cache = {}
+
 def get_news_headlines(asset_name):
+    # Check memory cache
+    now = dt.datetime.now()
+    if asset_name in news_cache:
+        cache_time, cached_headlines = news_cache[asset_name]
+        # Cache for 15 minutes to reduce API latency
+        if (now - cache_time).total_seconds() < 900:
+            return cached_headlines
+
     feeds = []
     if asset_name == "BTC":
         feeds = ["https://www.coindesk.com/arc/outboundfeeds/rss/", "https://cointelegraph.com/rss"]
@@ -52,7 +66,10 @@ def get_news_headlines(asset_name):
             "Gold traders watching bond yields",
             "Macro uncertainty driving safe-haven flows"
         ]
-    return headlines[:10]
+    
+    result = headlines[:10]
+    news_cache[asset_name] = (now, result)
+    return result
 
 def get_sr_levels(ticker, current_price):
     levels = []
@@ -117,6 +134,28 @@ def get_sr_levels(ticker, current_price):
 
 @app.get("/api/forecast")
 def get_forecast(ticker: str = "GC=F", asset_name: str = "GOLD", lookback: int = 256, pred_len: int = 12):
+    # Try reading from cache file first to save CPU
+    try:
+        import os
+        import json
+        from pathlib import Path
+        BASE_DIR = Path(__file__).resolve().parent
+        cache_path = BASE_DIR / "cache" / f"{asset_name.lower()}_forecast.json"
+        if cache_path.exists():
+            # Ensure the cache file is relatively fresh (max 15 minutes)
+            import time
+            mtime = os.path.getmtime(cache_path)
+            age_sec = time.time() - mtime
+            if age_sec < 900:
+                with open(cache_path, "r") as f:
+                    data = json.load(f)
+                # Overwrite weekend check dynamically
+                is_weekend = dt.datetime.now().weekday() in [5, 6]
+                data["market_closed"] = is_weekend if asset_name == "GOLD" else False
+                return data
+    except Exception as e:
+        print(f"Error reading forecast cache: {e}")
+
     try:
         config = {
             "ticker": ticker,

@@ -457,6 +457,168 @@ def get_forecast_payload(config):
     }
 
 # =========================================================
+# SUPPORT & RESISTANCE LEVELS
+# =========================================================
+
+def get_sr_levels(ticker, current_price):
+    import math
+    levels = []
+    timeframes = [
+        ("15m", "15m", "7d"),
+        ("30m", "30m", "14d"),
+        ("1H", "60m", "30d"),
+        ("4H", "4h", "90d"),
+        ("D", "1d", "180d"),
+        ("W", "1wk", "2y"),
+        ("M", "1mo", "5y")
+    ]
+    for label, interval, period in timeframes:
+        try:
+            htf = yf.download(ticker, interval=interval, period=period, progress=False, auto_adjust=False)
+            if htf.empty: continue
+            if isinstance(htf.columns, pd.MultiIndex):
+                htf.columns = [c[0] for c in htf.columns]
+            
+            recent_high = htf['High'].tail(20).max()
+            recent_low = htf['Low'].tail(20).min()
+            
+            levels.append({"tf": label, "type": "R", "price": float(recent_high)})
+            levels.append({"tf": label, "type": "S", "price": float(recent_low)})
+        except Exception:
+            pass
+
+    filtered = []
+    for lvl in levels:
+        if math.isnan(lvl["price"]): continue
+        distance_pct = abs(lvl["price"] - current_price) / current_price * 100
+        if distance_pct <= 6.0:
+            filtered.append(lvl)
+
+    # Group and merge S/R levels that are within 0.15% of each other
+    levels_R = sorted([l for l in filtered if l["type"] == "R"], key=lambda x: x["price"])
+    levels_S = sorted([l for l in filtered if l["type"] == "S"], key=lambda x: x["price"])
+
+    def merge_levels(lvl_list):
+        if not lvl_list:
+            return []
+        merged = []
+        current = lvl_list[0]
+        for next_lvl in lvl_list[1:]:
+            if abs(next_lvl["price"] - current["price"]) / current["price"] * 100 <= 0.15:
+                # Merge: combine timeframes
+                tfs = current["tf"].split("/") + next_lvl["tf"].split("/")
+                order_map = {"15m": 0, "30m": 1, "1H": 2, "4H": 3, "D": 4, "W": 5, "M": 6}
+                unique_tfs = sorted(list(set(tfs)), key=lambda x: order_map.get(x, 99))
+                current["tf"] = "/".join(unique_tfs)
+                # Set price to average
+                current["price"] = (current["price"] + next_lvl["price"]) / 2
+            else:
+                merged.append(current)
+                current = next_lvl
+        merged.append(current)
+        return merged
+
+    merged_R = merge_levels(levels_R)
+    merged_S = merge_levels(levels_S)
+    return merged_R + merged_S
+
+# =========================================================
+# SAVE FORECAST CACHE
+# =========================================================
+
+def save_forecast_cache(asset_name, payload, config):
+    try:
+        import math
+        import json
+        
+        ticker = config["ticker"]
+        lookback = config["lookback"]
+        pred_len = config["pred_len"]
+        
+        x_timestamp = payload["x_timestamp"]
+        x_df = payload["x_df"]
+        pred_df = payload["pred_df"]
+        y_timestamp = payload["y_timestamp"]
+        df = payload["df"]
+        
+        hist_data = []
+        for i in range(len(x_df)):
+            hist_data.append({
+                "time": int(x_timestamp.iloc[i].timestamp()),
+                "open": float(x_df['open'].iloc[i]),
+                "high": float(x_df['high'].iloc[i]),
+                "low": float(x_df['low'].iloc[i]),
+                "close": float(x_df['close'].iloc[i])
+            })
+            
+        forecast_data = []
+        forecast_data.append({
+            "time": int(x_timestamp.iloc[-1].timestamp()),
+            "value": float(x_df['close'].iloc[-1])
+        })
+        for i in range(len(pred_df)):
+            forecast_data.append({
+                "time": int(y_timestamp.iloc[i].timestamp()),
+                "value": float(pred_df['close'].iloc[i])
+            })
+            
+        ema20_data = []
+        ema20_series = df['ema20'].tail(lookback)
+        for i in range(len(ema20_series)):
+            val = ema20_series.iloc[i]
+            if not math.isnan(val):
+                ema20_data.append({
+                    "time": int(x_timestamp.iloc[i].timestamp()),
+                    "value": float(val)
+                })
+                
+        ema89_data = []
+        ema89_series = df['ema89_median'].tail(lookback)
+        for i in range(len(ema89_series)):
+            val = ema89_series.iloc[i]
+            if not math.isnan(val):
+                ema89_data.append({
+                    "time": int(x_timestamp.iloc[i].timestamp()),
+                    "value": float(val)
+                })
+
+        sr_levels = get_sr_levels(ticker, payload["current_price"])
+
+        mae = None
+        try:
+            actual = df['close'].tail(pred_len).values
+            predicted = pred_df['close'].values[:len(actual)]
+            mae = float(sum(abs(actual - predicted)) / len(actual))
+        except:
+            pass
+
+        is_weekend = dt.datetime.now().weekday() in [5, 6]
+
+        cache_data = {
+            "success": True,
+            "asset_name": asset_name,
+            "current_price": float(payload["current_price"]),
+            "forecast_price": float(payload["forecast_price"]),
+            "move_pct": float(payload["move_pct"]),
+            "direction": payload["direction"],
+            "hist_data": hist_data,
+            "forecast_data": forecast_data,
+            "ema20_data": ema20_data,
+            "ema89_data": ema89_data,
+            "sr_levels": sr_levels,
+            "mae": mae,
+            "market_closed": is_weekend if asset_name == "GOLD" else False
+        }
+
+        os.makedirs(str(BASE_DIR / "cache"), exist_ok=True)
+        cache_path = BASE_DIR / "cache" / f"{asset_name.lower()}_forecast.json"
+        with open(cache_path, "w") as f:
+            json.dump(cache_data, f)
+        print(f"Cached forecast for {asset_name} to {cache_path}")
+    except Exception as e:
+        print(f"Failed to cache forecast for {asset_name}: {e}")
+
+# =========================================================
 # PROCESS ASSET
 # =========================================================
 
@@ -470,6 +632,9 @@ def process_asset(
     if payload is None:
 
         return
+
+    # Write to local cache so the FastAPI server can serve it instantly
+    save_forecast_cache(asset_name, payload, config)
 
     process_signal(
 
