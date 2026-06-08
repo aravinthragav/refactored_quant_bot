@@ -32,4 +32,9 @@ npm run build
 echo "Restarting PM2 Frontend instance..."
 pm2 restart gold-frontend
 
+# Restart PM2 Backend/Quant Engine processes
+echo "Restarting PM2 Backend & Quant Engine instances..."
+pm2 restart gold-api
+pm2 restart gold-bot
+
 echo "=== Deployment finished successfully at $(date) ==="
