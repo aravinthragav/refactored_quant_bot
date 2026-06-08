@@ -2,11 +2,12 @@
 
 import React, { useEffect, useState } from "react";
 
-export default function NewsTicker() {
+export default function NewsTicker({ apiUrl }: { apiUrl?: string }) {
   const [news, setNews] = useState<string[]>([]);
 
   useEffect(() => {
-    fetch("http://localhost:8000/api/news?asset_name=GOLD")
+    const apiBase = apiUrl || (typeof window !== "undefined" ? (process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000") : "http://localhost:8000");
+    fetch(`${apiBase}/api/news?asset_name=GOLD`)
       .then((res) => res.json())
       .then((data) => {
         if (data.success && data.headlines) {
@@ -15,7 +16,7 @@ export default function NewsTicker() {
         }
       })
       .catch((err) => console.error("Failed to fetch news:", err));
-  }, []);
+  }, [apiUrl]);
 
   if (news.length === 0) return null;
 

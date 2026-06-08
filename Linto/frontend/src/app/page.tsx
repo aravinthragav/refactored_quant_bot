@@ -180,7 +180,7 @@ export default function Home() {
         )}
       </div>
 
-      <NewsTicker />
+      <NewsTicker apiUrl={API_BASE_URL} />
     </main>
   );
 }
