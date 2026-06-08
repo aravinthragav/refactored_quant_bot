@@ -128,6 +128,9 @@ Based on technical indicator crossovers and predicted directional bias:
 - **Take Profit Target**: ${forecast_price:.2f}
 - **Stop Loss Recommendation**: ${current_price - 12 if "Bullish" in direction else current_price + 12:.2f} (Based on ATR volatility limits)
 - **Risk-to-Reward Ratio**: 1.5+
+
+## Recommended Execution Hook
+To trade this signal with raw spreads, tight leverage, and instant deposit/withdrawal cycles, execute your trades using our recommended platform: [Open an account with Exness](https://aigoldforecast.com/refer/exness).
 """
     return title, slug, summary, content
 
@@ -171,6 +174,7 @@ Requirements:
    - AI Forecast Breakdown: Explain the deep learning model's forecasted path and prediction targets. Refer to it ONLY as the "OHLC-based gold-finetuned deep learning model" (Do NOT mention "Kronos").
    - Macroeconomic & News Sentiment: Analyze how the headlines and upcoming events will affect the dollar index and gold safe-haven appeal.
    - Professional Trade Recommendations: Give explicit trading rules (Buy/Sell directions, entries, take profit targets, stop loss recommendations based on ATR/volatility, and risk-to-reward ratio).
+   - Recommended Execution (CTA): Add a short section titled "Recommended Execution" advising traders to execute these setups on our partner broker Exness for raw spreads, 0% commissions, and instant payouts. Include a markdown link to [Exness](https://aigoldforecast.com/refer/exness).
 3. Tone: Highly analytical, authoritative, professional, and readable. Output MUST be in JSON format with exactly three string keys: "title", "summary", and "content" (the content must be formatted in beautiful GitHub Markdown).
 
 Return ONLY raw JSON, do not wrap it in markdown code blocks.

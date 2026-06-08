@@ -203,8 +203,30 @@ export default function BlogDetailPage() {
             </div>
 
             {/* Markdown rendered body */}
-            <div className="prose prose-invert max-w-none">
+            <div className="prose prose-invert max-w-none mb-10">
               {renderMarkdown(post.content)}
+            </div>
+
+            {/* Premium Broker CTA Banner */}
+            <div className="border border-amber-500/30 bg-amber-500/10 rounded-2xl p-6 backdrop-blur-md relative overflow-hidden flex flex-col sm:flex-row items-center justify-between gap-6 mt-10">
+              <div className="absolute top-0 right-0 w-[150px] h-[150px] bg-amber-500/10 rounded-full blur-[40px] pointer-events-none" />
+              <div>
+                <h3 className="text-lg font-bold text-white mb-1.5 flex items-center gap-2">
+                  <Sparkles className="h-5 w-5 text-amber-500" />
+                  Ready to execute these signals?
+                </h3>
+                <p className="text-slate-300 text-xs sm:text-sm leading-relaxed max-w-xl">
+                  Trade Spot Gold (XAU/USD) with our recommended broker **Exness**. Experience raw spreads, 0% commissions, dynamic leverage, and instant deposit/withdrawal processing.
+                </p>
+              </div>
+              <a
+                href="/refer/exness"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full sm:w-auto text-center shrink-0 px-6 py-3 bg-gradient-to-r from-amber-500 to-yellow-500 text-black text-sm font-bold rounded-xl hover:from-amber-400 hover:to-yellow-400 shadow-[0_0_20px_rgba(245,158,11,0.25)] hover:shadow-[0_0_25px_rgba(245,158,11,0.35)] transition-all duration-300"
+              >
+                Trade on Exness
+              </a>
             </div>
           </article>
         ) : (
