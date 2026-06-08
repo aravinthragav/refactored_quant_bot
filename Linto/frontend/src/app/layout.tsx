@@ -18,12 +18,16 @@ export const metadata: Metadata = {
   description: "Advanced AI-driven gold price forecasting, real-time market signals, technical EMAs, support/resistance levels, and breaking commodities news.",
   keywords: ["Gold Forecast", "AI Trading Signals", "Gold Price Prediction", "Commodities Trading", "Technical Analysis", "XAUUSD", "Precious Metals"],
   authors: [{ name: "AI Gold Forecast Team" }],
+  alternates: {
+    canonical: "https://aigoldforecast.com",
+  },
   openGraph: {
     title: "AI Gold Forecast Terminal | Real-Time Market Intelligence",
     description: "Get smart trading signals and real-time gold price forecasts powered by machine learning.",
-    url: "http://localhost:3000",
+    url: "https://aigoldforecast.com",
     siteName: "AI Gold Forecast Terminal",
     type: "website",
+    locale: "en_US",
   },
   twitter: {
     card: "summary_large_image",
