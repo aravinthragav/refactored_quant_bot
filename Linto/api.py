@@ -23,6 +23,25 @@ app.add_middleware(
 
 news_cache = {}
 
+def is_news_relevant(title, asset_name):
+    title_lower = title.lower()
+    if asset_name == "BTC":
+        keywords = [
+            "btc", "bitcoin", "crypto", "ether", "eth", "solana", "sol", "blockchain",
+            "cryptocurrency", "sec", "binance", "coinbase", "etf", "ledger",
+            "satoshi", "halving", "digital asset", "fed", "inflation", "macro"
+        ]
+    else:
+        keywords = [
+            "gold", "silver", "platinum", "palladium", "metal", "metals", "bullion", "xau", 
+            "mining", "miner", "miners", "commodity", "commodities", "fed", "fomc", "inflation", "cpi", 
+            "yield", "yields", "rates", "interest rate", "interest rates", "central bank", "central banks", "dollar", "usd", 
+            "greenback", "macro", "monetary", "powell", "treasury", "safe-haven", "safe haven", "bond", "bonds", 
+            "economic", "gdp", "recession", "rate cut", "rate cuts", "rate hike", "rate hikes", "hike", "cut", 
+            "reserve", "reserves", "spot price", "precious"
+        ]
+    return any(k in title_lower for k in keywords)
+
 def get_news_headlines(asset_name):
     # Check memory cache
     now = dt.datetime.now()
@@ -34,29 +53,32 @@ def get_news_headlines(asset_name):
 
     feeds = []
     if asset_name == "BTC":
-        feeds = ["https://www.coindesk.com/arc/outboundfeeds/rss/", "https://cointelegraph.com/rss"]
+        feeds = [
+            {"url": "https://www.coindesk.com/arc/outboundfeeds/rss/", "filter": False},
+            {"url": "https://cointelegraph.com/rss", "filter": False}
+        ]
     else:
         feeds = [
-            "https://www.reutersagency.com/feed/?best-topics=commodities",
-            "https://www.investing.com/rss/news_25.rss",
-            "https://www.fxstreet.com/rss/news",
-            "https://www.kitco.com/rss/news",
-            "https://www.mining.com/feed/",
-            "https://feeds.content.dowjones.io/public/rss/mw_marketpulse",
-            "https://finance.yahoo.com/news/rssindex",
-            "https://www.cnbc.com/id/100003114/device/rss/rss.html",
-            "https://www.federalreserve.gov/feeds/press_all.xml",
-            "https://www.imf.org/en/News/RSS"
+            {"url": "https://www.kitco.com/rss/news", "filter": False},
+            {"url": "https://news.goldseek.com/newsRSS.xml", "filter": False},
+            {"url": "https://www.mining.com/feed/", "filter": False},
+            {"url": "https://www.federalreserve.gov/feeds/press_all.xml", "filter": False},
+            {"url": "https://www.imf.org/en/News/RSS", "filter": False},
+            {"url": "https://www.reutersagency.com/feed/?best-topics=commodities", "filter": True},
+            {"url": "https://www.fxstreet.com/rss/news", "filter": True}
         ]
 
     headlines = []
-    for url in feeds:
+    for feed_info in feeds:
+        url = feed_info["url"]
+        should_filter = feed_info["filter"]
         try:
             feed = feedparser.parse(url)
             for entry in feed.entries[:5]:
                 title = entry.title.replace("&amp;", "&")
-                headlines.append(title)
-        except Exception as e:
+                if not should_filter or is_news_relevant(title, asset_name):
+                    headlines.append(title)
+        except Exception:
             pass
 
     headlines = list(dict.fromkeys(headlines))
