@@ -21,6 +21,9 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "https://aigoldforecast.com",
   },
+  verification: {
+    google: "-7z15J4t84Q0HZDx7DN2MT564IU9rPu3BkAVB_BCoiA",
+  },
   openGraph: {
     title: "AI Gold Forecast Terminal | Real-Time Market Intelligence",
     description: "Get smart trading signals and real-time gold price forecasts powered by machine learning.",
