@@ -347,6 +347,10 @@ export default function Home() {
                 <div className="reveal animate-fade-up" style={{ animationDelay: "0.4s" }}>
                   <ChartWidget data={data} />
                 </div>
+                {/* Mobile/Tablet Refresh Indicator - Centered between chart and footer */}
+                <div className="reveal animate-fade-up text-center mt-6 lg:hidden text-[10px] text-secondary/50 font-bold uppercase tracking-[0.2em] font-sans" style={{ animationDelay: "0.5s" }}>
+                  Auto refreshes every 5 minutes
+                </div>
               </section>
 
               {/* Right Sidebar */}

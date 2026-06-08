@@ -170,7 +170,7 @@ export default function ChartWidget({ data }: ChartWidgetProps) {
           <span className="px-2 py-0.5 bg-surface-container-high rounded text-[10px] font-bold border border-outline-variant/30 text-on-surface-variant">
             5M INTERVAL
           </span>
-          <span className="text-[10px] text-secondary/70 font-semibold">
+          <span className="text-[10px] text-secondary/70 font-semibold hidden lg:inline">
             • Auto refreshes every 5 minutes
           </span>
         </div>
