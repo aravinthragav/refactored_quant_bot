@@ -86,7 +86,7 @@ def generate_trade_chart(
         0.5, 0.5, 'www.aigoldforecast.com',
         transform=ax.transAxes,
         color='white',
-        alpha=0.08,
+        alpha=0.2,
         fontsize=44,
         fontweight='bold',
         rotation=15,

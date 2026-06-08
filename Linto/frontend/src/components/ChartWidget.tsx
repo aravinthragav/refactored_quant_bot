@@ -51,7 +51,7 @@ export default function ChartWidget({ data }: ChartWidgetProps) {
           lines: [
             {
               text: "www.aigoldforecast.com",
-              color: "rgba(212, 175, 55, 0.06)",
+              color: "rgba(212, 175, 55, 0.18)",
               fontSize: 72,
             },
           ],
