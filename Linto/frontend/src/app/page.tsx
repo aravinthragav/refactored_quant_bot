@@ -83,7 +83,7 @@ export default function Home() {
             href="/strategies"
             className="w-full sm:w-auto text-center no-underline border border-amber-500/25 bg-amber-500/10 px-3 py-1.5 md:px-5 md:py-2.5 rounded-lg text-amber-400 font-bold text-xs md:text-[15px] inline-block hover:bg-amber-500/20 transition-colors"
           >
-            📖 Playbook
+            📖 Strategies
           </Link>
           <Link
             href="/blog"

@@ -245,7 +245,7 @@ export default function StrategiesPage() {
           <div className="flex items-center gap-3">
             <Compass className="h-5 w-5 text-amber-500" />
             <span className="text-sm font-semibold tracking-wider text-slate-300 uppercase">
-              Trading Playbook
+              Trading Strategies
             </span>
           </div>
         </header>
