@@ -16,6 +16,7 @@ export default function Home() {
   const [scrolled, setScrolled] = useState(false);
   const [blogs, setBlogs] = useState<any[]>([]);
   const [randomStrategy, setRandomStrategy] = useState<any>(null);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const strategiesList = [
     { name: "EMA 20 & 89 Crossover", tagline: "Follow major momentum swings by tracking moving averages." },
@@ -214,7 +215,7 @@ export default function Home() {
           </nav>
 
           {/* Right: Accuracy + CTAs */}
-          <div className="flex items-center gap-4 md:gap-6">
+          <div className="flex items-center gap-3 md:gap-6">
             <div className="hidden lg:flex flex-col items-end">
               <span className="text-[10px] text-on-surface-variant font-semibold tracking-wider uppercase">
                 30-Signal Accuracy
@@ -225,13 +226,75 @@ export default function Home() {
               href="https://t.me/tradingalertsAR"
               target="_blank"
               rel="noopener noreferrer"
-              className="bg-primary hover:bg-gold-light text-on-primary font-bold px-6 py-2.5 rounded-lg transition-all duration-300 transform active:scale-95 shadow-[0_0_15px_rgba(212,175,55,0.3)] hover:shadow-[0_0_25px_rgba(212,175,55,0.5)] premium-hover-btn text-xs md:text-sm no-underline"
+              className="bg-primary hover:bg-gold-light text-on-primary font-bold px-4 md:px-6 py-2 md:py-2.5 rounded-lg transition-all duration-300 transform active:scale-95 shadow-[0_0_15px_rgba(212,175,55,0.3)] hover:shadow-[0_0_25px_rgba(212,175,55,0.5)] premium-hover-btn text-xs md:text-sm no-underline"
             >
               Subscribe
             </a>
+
+            {/* Hamburger Button */}
+            <button
+              onClick={() => setMenuOpen(!menuOpen)}
+              className="md:hidden flex flex-col justify-center items-center w-8 h-8 rounded-lg border border-primary/20 bg-surface-container-high/50 text-primary hover:bg-surface-container-high transition-all"
+              aria-label="Toggle Navigation Menu"
+            >
+              <span className={`w-4 h-0.5 bg-primary rounded transition-all duration-300 ${menuOpen ? "transform rotate-45 translate-y-[3px]" : ""}`} />
+              <span className={`w-4 h-0.5 bg-primary rounded my-1 transition-all duration-300 ${menuOpen ? "opacity-0 h-0 my-0" : ""}`} />
+              <span className={`w-4 h-0.5 bg-primary rounded transition-all duration-300 ${menuOpen ? "transform -rotate-45 -translate-y-[3px]" : ""}`} />
+            </button>
           </div>
         </div>
       </header>
+
+      {/* ─── Mobile Drawer Side Menu ─── */}
+      <div className={`fixed inset-0 z-[9999] transition-all duration-500 ease-in-out md:hidden ${menuOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}>
+        <div 
+          onClick={() => setMenuOpen(false)} 
+          className="absolute inset-0 bg-[#06070a]/80 backdrop-blur-sm"
+        />
+        <div className={`absolute top-0 right-0 h-full w-[260px] bg-[#0c0e15] border-l border-primary/15 shadow-[0_0_50px_rgba(0,0,0,0.85)] flex flex-col p-6 transition-transform duration-500 ease-in-out ${menuOpen ? "translate-x-0" : "translate-x-full"}`}>
+          <div className="flex justify-between items-center mb-8 border-b border-primary/10 pb-4">
+            <span className="font-playfair text-base font-bold gold-shimmer-text">Navigation</span>
+            <button 
+              onClick={() => setMenuOpen(false)} 
+              className="text-on-surface-variant hover:text-primary p-1 text-lg font-bold"
+            >
+              ✕
+            </button>
+          </div>
+          <nav className="flex flex-col gap-6 text-base font-bold">
+            <Link 
+              href="/" 
+              onClick={() => setMenuOpen(false)}
+              className="text-primary no-underline hover:text-gold-light transition-colors border-b border-white/5 pb-2"
+            >
+              🏠 Home
+            </Link>
+            <Link 
+              href="/blog" 
+              onClick={() => setMenuOpen(false)}
+              className="text-on-surface hover:text-primary transition-colors no-underline border-b border-white/5 pb-2"
+            >
+              📰 Daily Blog
+            </Link>
+            <Link 
+              href="/strategies" 
+              onClick={() => setMenuOpen(false)}
+              className="text-on-surface hover:text-primary transition-colors no-underline border-b border-white/5 pb-2"
+            >
+              📖 Strategies
+            </Link>
+            <a 
+              href="https://t.me/tradingalertsAR" 
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => setMenuOpen(false)}
+              className="text-[#229ED9] hover:underline no-underline mt-2 flex items-center gap-2"
+            >
+              📢 Join Telegram
+            </a>
+          </nav>
+        </div>
+      </div>
 
       <SignalBanner signal={activeSignal} />
 
