@@ -45,15 +45,14 @@ export default function ChartWidget({ data }: ChartWidgetProps) {
     try {
       const firstPane = chart.panes()[0];
       if (firstPane) {
-        const isMarketClosed = !!data.market_closed || (data.asset_name === "GOLD" && (new Date().getDay() === 0 || new Date().getDay() === 6));
         createTextWatermark(firstPane, {
           horzAlign: "center",
           vertAlign: "center",
           lines: [
             {
-              text: isMarketClosed ? "Market Closed" : "www.aigoldforecast.com",
-              color: isMarketClosed ? "rgba(239, 83, 80, 0.15)" : "rgba(212, 175, 55, 0.06)",
-              fontSize: isMarketClosed ? 64 : 72,
+              text: "www.aigoldforecast.com",
+              color: "rgba(212, 175, 55, 0.06)",
+              fontSize: 72,
             },
           ],
         });
