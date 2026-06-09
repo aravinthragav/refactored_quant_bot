@@ -3,7 +3,7 @@
 import Link from "next/link";
 import React from "react";
 
-export default function Footer() {
+export default function Footer({ onTakeTour }: { onTakeTour?: () => void }) {
   return (
     <footer className="w-full border-t border-outline-variant/10 mt-12 bg-[#0a0c14] text-xs select-none">
       <div className="w-full px-4 md:px-12 py-5">
@@ -69,6 +69,14 @@ export default function Footer() {
 
           {/* Right: Quick Links */}
           <div className="flex items-center gap-5 text-on-surface-variant/80 text-[11px] font-sans font-semibold justify-center md:justify-end">
+            {onTakeTour && (
+              <button 
+                onClick={onTakeTour} 
+                className="hover:text-primary transition-colors bg-transparent border-none cursor-pointer font-sans font-semibold text-[11px] p-0"
+              >
+                Take Tour
+              </button>
+            )}
             <Link href="/blog" className="hover:text-primary transition-colors no-underline">Blog</Link>
             <Link href="/strategies" className="hover:text-primary transition-colors no-underline">Strategies</Link>
             <Link href="/risk-disclosure" className="hover:text-primary transition-colors no-underline">Risk Disclosure</Link>

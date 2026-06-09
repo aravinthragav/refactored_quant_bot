@@ -6,6 +6,7 @@ import ChartWidget from "@/components/ChartWidget";
 import NewsTicker from "@/components/NewsTicker";
 import SignalBanner from "@/components/SignalBanner";
 import Footer from "@/components/Footer";
+import OnboardingTour from "@/components/OnboardingTour";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
@@ -17,6 +18,19 @@ export default function Home() {
   const [blogs, setBlogs] = useState<any[]>([]);
   const [randomStrategy, setRandomStrategy] = useState<any>(null);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [tourOpen, setTourOpen] = useState(false);
+
+  useEffect(() => {
+    const hasSeenTour = localStorage.getItem("hasSeenTour_v1");
+    if (!hasSeenTour) {
+      setTourOpen(true);
+    }
+  }, []);
+
+  const handleTourClose = () => {
+    localStorage.setItem("hasSeenTour_v1", "true");
+    setTourOpen(false);
+  };
 
   const strategiesList = [
     { name: "EMA 20 & 89 Crossover", tagline: "Follow major momentum swings by tracking moving averages." },
@@ -174,6 +188,7 @@ export default function Home() {
     <main className="min-h-screen text-foreground font-sans overflow-x-hidden pb-16">
       {/* ─── Fixed Glassmorphic Navbar ─── */}
       <header
+        id="tour-header"
         className={`fixed top-0 w-full z-50 transition-all duration-500 ease-in-out border-b backdrop-blur-[24px] ${
           scrolled
             ? "border-primary/15 bg-[#0a0c12]/88 shadow-[0_4px_30px_rgba(0,0,0,0.4),0_1px_0_rgba(212,175,55,0.05)]"
@@ -317,7 +332,7 @@ export default function Home() {
         ) : data ? (
           <>
             {/* ─── Metrics Row ─── */}
-            <section className="grid grid-cols-2 lg:grid-cols-5 gap-3 md:gap-5 mb-3">
+            <section id="tour-metrics" className="grid grid-cols-2 lg:grid-cols-5 gap-3 md:gap-5 mb-3">
               {/* Current — gold-rim hero card */}
               <div className="reveal animate-fade-up glass-card glass-card-hover gold-rim p-4 md:p-5 rounded-xl" style={{ animationDelay: "0.1s" }}>
                 <p className="text-[10px] md:text-xs text-on-surface-variant uppercase mb-1.5 font-semibold tracking-wider">Current</p>
@@ -406,7 +421,7 @@ export default function Home() {
               </aside>
 
               {/* Center: Chart */}
-              <section className="col-span-12 lg:col-span-8">
+              <section id="tour-chart" className="col-span-12 lg:col-span-8">
                 <div className="reveal animate-fade-up" style={{ animationDelay: "0.4s" }}>
                   <ChartWidget data={data} />
                 </div>
@@ -426,7 +441,7 @@ export default function Home() {
                 </div>
 
                 {/* Dynamic blogs and strategy card */}
-                <div className="reveal animate-fade-up glass-card p-4 rounded-xl space-y-4" style={{ animationDelay: "1.1s" }}>
+                <div id="tour-sidebars" className="reveal animate-fade-up glass-card p-4 rounded-xl space-y-4" style={{ animationDelay: "1.1s" }}>
                   <div>
                     <h5 className="text-[10px] font-bold border-b border-primary/20 pb-1.5 mb-3 tracking-wider uppercase text-on-surface-variant font-sans">
                       <span className="gold-shimmer-text">Latest Intelligence</span>
@@ -482,9 +497,11 @@ export default function Home() {
         )}
       </div>
 
-      <Footer />
+      <Footer onTakeTour={() => setTourOpen(true)} />
 
       <NewsTicker apiUrl={API_BASE_URL} />
+      
+      <OnboardingTour isOpen={tourOpen} onClose={handleTourClose} />
     </main>
   );
 }

@@ -266,6 +266,14 @@ h1, h2, h3, h4, h5, h6 {
   scrollbar-width: none;
 }
 
+/* Onboarding Tour Spotlight Highlight */
+.tour-highlight {
+  box-shadow: 0 0 0 4px rgba(242, 202, 80, 0.2), 0 0 30px rgba(242, 202, 80, 0.15) !important;
+  border-color: rgba(242, 202, 80, 0.45) !important;
+  background-color: rgba(22, 24, 32, 0.95) !important;
+  transition: all 0.3s ease;
+}
+
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
   .animate-fade-up, .animate-shimmer, .animate-pulse-glow, .reveal, .premium-hover-btn::after {
