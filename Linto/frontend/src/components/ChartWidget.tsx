@@ -170,9 +170,16 @@ export default function ChartWidget({ data }: ChartWidgetProps) {
           <span className="px-2 py-0.5 bg-surface-container-high rounded text-[10px] font-bold border border-outline-variant/30 text-on-surface-variant">
             5M INTERVAL
           </span>
-          <span className="text-[10px] text-secondary/70 font-semibold hidden lg:inline">
-            • Auto refreshes every 5 minutes
-          </span>
+          {(data?.market_closed || (typeof window !== "undefined" && [0, 6].includes(new Date().getDay()))) ? (
+            <span className="text-xs md:text-sm text-amber-500 font-extrabold border border-amber-500/30 bg-amber-500/10 px-3 py-1 rounded uppercase tracking-wider animate-pulse flex items-center gap-1.5 shadow-lg shadow-amber-950/20">
+              <span className="w-2 h-2 rounded-full bg-amber-500 animate-ping" />
+              Market is closed
+            </span>
+          ) : (
+            <span className="text-[10px] text-secondary/70 font-semibold hidden lg:inline">
+              • Auto refreshes every 5 minutes
+            </span>
+          )}
         </div>
         <div className="flex items-center gap-2 text-[10px] text-on-surface-variant font-semibold">
           <span className="flex items-center gap-1">
