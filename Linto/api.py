@@ -188,11 +188,11 @@ def get_forecast(ticker: str = "GC=F", asset_name: str = "GOLD", lookback: int =
             import time
             mtime = os.path.getmtime(cache_path)
             age_sec = time.time() - mtime
-            if age_sec < 900:
+            is_weekend = dt.datetime.now().weekday() in [5, 6]
+            if age_sec < 900 or is_weekend:
                 with open(cache_path, "r") as f:
                     data = json.load(f)
                 # Overwrite weekend check dynamically
-                is_weekend = dt.datetime.now().weekday() in [5, 6]
                 data["market_closed"] = is_weekend if asset_name == "GOLD" else False
                 return data
     except Exception as e:
