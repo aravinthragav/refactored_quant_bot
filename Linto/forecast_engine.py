@@ -244,7 +244,8 @@ def add_indicators(df):
 def prepare_prediction_data(
     df,
     lookback,
-    pred_len
+    pred_len,
+    interval="5m"
 ):
 
     x_df = df[
@@ -293,11 +294,21 @@ def prepare_prediction_data(
 
     last_ts = x_timestamp.iloc[-1]
 
+    freq_map = {
+        "5m": "5min",
+        "15m": "15min",
+        "30m": "30min",
+        "1h": "1h",
+        "1d": "1D",
+        "D": "1D"
+    }
+    freq = freq_map.get(interval, "5min")
+
     y_timestamp = pd.Series(
         pd.date_range(
             start=last_ts,
             periods=pred_len + 1,
-            freq="5min"
+            freq=freq
         )[1:]
     )
 
@@ -377,7 +388,9 @@ def get_forecast_payload(config):
 
         lookback=lookback,
 
-        pred_len=pred_len
+        pred_len=pred_len,
+
+        interval=interval
     )
 
     # =====================================================
@@ -611,10 +624,11 @@ def save_forecast_cache(asset_name, payload, config):
         }
 
         os.makedirs(str(BASE_DIR / "cache"), exist_ok=True)
-        cache_path = BASE_DIR / "cache" / f"{asset_name.lower()}_forecast.json"
+        interval = config.get("interval", "5m")
+        cache_path = BASE_DIR / "cache" / f"{asset_name.lower()}_{interval}_forecast.json"
         with open(cache_path, "w") as f:
             json.dump(cache_data, f)
-        print(f"Cached forecast for {asset_name} to {cache_path}")
+        print(f"Cached forecast for {asset_name} ({interval}) to {cache_path}")
     except Exception as e:
         print(f"Failed to cache forecast for {asset_name}: {e}")
 

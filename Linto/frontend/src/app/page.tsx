@@ -19,6 +19,7 @@ export default function Home() {
   const [randomStrategy, setRandomStrategy] = useState<any>(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const [tourOpen, setTourOpen] = useState(false);
+  const [currentInterval, setCurrentInterval] = useState<string>("5m");
 
   useEffect(() => {
     const hasSeenTour = localStorage.getItem("hasSeenTour_v1");
@@ -45,9 +46,9 @@ export default function Home() {
     { name: "London/NY Open Breakout", tagline: "Trade high-liquidity volume surges during session overlaps." }
   ];
 
-  const fetchForecast = async () => {
+  const fetchForecast = async (intervalVal: string = currentInterval) => {
     try {
-      const res = await fetch(`${API_BASE_URL}/api/forecast?ticker=GC=F&asset_name=GOLD`);
+      const res = await fetch(`${API_BASE_URL}/api/forecast?ticker=GC=F&asset_name=GOLD&interval=${intervalVal}`);
       const json = await res.json();
       if (json.success) {
         setData(json);
@@ -91,16 +92,16 @@ export default function Home() {
   };
 
   useEffect(() => {
-    fetchForecast();
+    fetchForecast(currentInterval);
     fetchActiveSignal();
     fetchBlogs();
     pickRandomStrategy();
     const interval = setInterval(() => {
-      fetchForecast();
+      fetchForecast(currentInterval);
       fetchActiveSignal();
     }, 5 * 60 * 1000);
     return () => clearInterval(interval);
-  }, []);
+  }, [currentInterval]);
 
   // Scroll listener for navbar
   useEffect(() => {
@@ -423,7 +424,14 @@ export default function Home() {
               {/* Center: Chart */}
               <section id="tour-chart" className="col-span-12 lg:col-span-8">
                 <div className="reveal animate-fade-up" style={{ animationDelay: "0.4s" }}>
-                  <ChartWidget data={data} />
+                  <ChartWidget 
+                    data={data} 
+                    currentInterval={currentInterval} 
+                    onIntervalChange={(newVal) => {
+                      setLoading(true);
+                      setCurrentInterval(newVal);
+                    }} 
+                  />
                 </div>
                 {/* Mobile/Tablet Refresh Indicator - Centered between chart and footer */}
                 <div className="reveal animate-fade-up text-center mt-6 lg:hidden text-[10px] text-secondary/50 font-bold uppercase tracking-[0.2em] font-sans" style={{ animationDelay: "0.5s" }}>

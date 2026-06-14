@@ -5,9 +5,11 @@ import { createChart, ColorType, CrosshairMode, CandlestickSeries, LineSeries, c
 
 interface ChartWidgetProps {
   data: any;
+  currentInterval?: string;
+  onIntervalChange?: (interval: string) => void;
 }
 
-export default function ChartWidget({ data }: ChartWidgetProps) {
+export default function ChartWidget({ data, currentInterval = "5m", onIntervalChange }: ChartWidgetProps) {
   const chartContainerRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<any>(null);
 
@@ -167,9 +169,22 @@ export default function ChartWidget({ data }: ChartWidgetProps) {
       <div className="flex justify-between items-center px-4 py-3 border-b border-outline-variant/30">
         <div className="flex items-center gap-2 flex-wrap">
           <span className="font-playfair text-base md:text-lg font-bold gold-shimmer-text">GOLD / USD</span>
-          <span className="px-2 py-0.5 bg-surface-container-high rounded text-[10px] font-bold border border-outline-variant/30 text-on-surface-variant">
-            5M INTERVAL
-          </span>
+          <div className="flex items-center gap-1 bg-[#161820] p-0.5 rounded border border-outline-variant/30">
+            {["5m", "15m", "30m", "1h"].map((intv) => (
+              <button
+                key={intv}
+                onClick={() => onIntervalChange?.(intv)}
+                type="button"
+                className={`px-2 py-0.5 rounded text-[10px] font-extrabold uppercase transition-all duration-200 cursor-pointer ${
+                  currentInterval === intv
+                    ? "bg-primary text-on-primary shadow-[0_0_8px_rgba(212,175,55,0.4)]"
+                    : "text-on-surface-variant/70 hover:text-on-surface hover:bg-surface-container-high"
+                }`}
+              >
+                {intv}
+              </button>
+            ))}
+          </div>
           {(data?.market_closed || (typeof window !== "undefined" && [0, 6].includes(new Date().getDay()))) ? (
             <span className="text-xs md:text-sm text-amber-500 font-extrabold border border-amber-500/30 bg-amber-500/10 px-3 py-1 rounded uppercase tracking-wider animate-pulse flex items-center gap-1.5 shadow-lg shadow-amber-950/20">
               <span className="w-2 h-2 rounded-full bg-amber-500 animate-ping" />

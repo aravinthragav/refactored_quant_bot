@@ -175,14 +175,22 @@ def get_sr_levels(ticker, current_price):
     return merged_R + merged_S
 
 @app.get("/api/forecast")
-def get_forecast(ticker: str = "GC=F", asset_name: str = "GOLD", lookback: int = 256, pred_len: int = 12):
+def get_forecast(ticker: str = "GC=F", asset_name: str = "GOLD", interval: str = "5m", lookback: int = 256, pred_len: int = 12):
+    # Restrict timeframes
+    allowed_intervals = ["5m", "15m", "30m", "1h"]
+    if interval not in allowed_intervals:
+        raise HTTPException(
+            status_code=400, 
+            detail=f"Invalid interval: '{interval}'. Supported intervals: {', '.join(allowed_intervals)}"
+        )
+
     # Try reading from cache file first to save CPU
     try:
         import os
         import json
         from pathlib import Path
         BASE_DIR = Path(__file__).resolve().parent
-        cache_path = BASE_DIR / "cache" / f"{asset_name.lower()}_forecast.json"
+        cache_path = BASE_DIR / "cache" / f"{asset_name.lower()}_{interval}_forecast.json"
         if cache_path.exists():
             # Ensure the cache file is relatively fresh (max 15 minutes)
             import time
@@ -201,7 +209,7 @@ def get_forecast(ticker: str = "GC=F", asset_name: str = "GOLD", lookback: int =
     try:
         config = {
             "ticker": ticker,
-            "interval": "5m",
+            "interval": interval,
             "lookback": lookback,
             "pred_len": pred_len
         }
@@ -269,7 +277,7 @@ def get_forecast(ticker: str = "GC=F", asset_name: str = "GOLD", lookback: int =
 
         is_weekend = dt.datetime.now().weekday() in [5, 6]
 
-        return {
+        res = {
             "success": True,
             "asset_name": asset_name,
             "current_price": float(payload["current_price"]),
@@ -284,6 +292,17 @@ def get_forecast(ticker: str = "GC=F", asset_name: str = "GOLD", lookback: int =
             "mae": mae,
             "market_closed": is_weekend if asset_name == "GOLD" else False
         }
+
+        # Save to cache
+        try:
+            os.makedirs(str(BASE_DIR / "cache"), exist_ok=True)
+            with open(cache_path, "w") as f:
+                json.dump(res, f)
+            print(f"Cached forecast for {asset_name} ({interval}) to {cache_path}")
+        except Exception as cache_err:
+            print(f"Failed to cache forecast response: {cache_err}")
+
+        return res
 
     except Exception as e:
         import traceback
