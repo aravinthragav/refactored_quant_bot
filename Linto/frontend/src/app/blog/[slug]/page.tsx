@@ -113,6 +113,27 @@ export default function BlogDetailPage() {
         return;
       }
 
+      // Markdown Images: ![alt](url)
+      if (trimmed.startsWith("![") && trimmed.includes("](") && trimmed.endsWith(")")) {
+        inList = false;
+        const altStart = 2;
+        const altEnd = trimmed.indexOf("](");
+        const urlStart = altEnd + 2;
+        const urlEnd = trimmed.length - 1;
+        const alt = trimmed.slice(altStart, altEnd);
+        const url = trimmed.slice(urlStart, urlEnd);
+        elements.push(
+          <div key={index} className="my-6 flex justify-center w-full">
+            <img 
+              src={url} 
+              alt={alt} 
+              className="rounded-xl border border-outline-variant/30 max-w-full h-auto shadow-lg shadow-black/40"
+            />
+          </div>
+        );
+        return;
+      }
+
       // Empty Lines
       if (!trimmed) {
         inList = false;
