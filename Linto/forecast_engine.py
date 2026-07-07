@@ -187,6 +187,20 @@ def fetch_market_data(
     # =====================================================
     # EXTRA
     # =====================================================
+    
+    # Filter out extreme wicks (bad ticks from yfinance) that distort the chart
+    for col in ['high', 'low', 'open', 'close']:
+        df[col] = pd.to_numeric(df[col], errors='coerce')
+        
+    # Calculate candle body size
+    body_max = df[['open', 'close']].max(axis=1)
+    body_min = df[['open', 'close']].min(axis=1)
+    body_size = body_max - body_min
+    
+    # Cap highs and lows to a max of 3x the average body size, or 0.15% of price, to remove bad spikes
+    max_wick = df['close'] * 0.0015
+    df['high'] = df[['high', body_max + max_wick]].min(axis=1)
+    df['low'] = df[['low', body_min - max_wick]].max(axis=1)
 
     df['amount'] = 0
 
