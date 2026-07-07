@@ -197,10 +197,9 @@ def fetch_market_data(
     body_min = df[['open', 'close']].min(axis=1)
     
     # Cap highs and lows to a max of 0.15% of price to remove bad spikes
-    import numpy as np
     max_wick = df['close'] * 0.0015
-    df['high'] = np.minimum(df['high'], body_max + max_wick)
-    df['low'] = np.maximum(df['low'], body_min - max_wick)
+    df['high'] = df['high'].clip(upper=body_max + max_wick)
+    df['low'] = df['low'].clip(lower=body_min - max_wick)
 
     df['amount'] = 0
 
