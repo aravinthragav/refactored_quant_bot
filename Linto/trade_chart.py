@@ -70,6 +70,11 @@ def generate_trade_chart(
 
     ax = axlist[0]
 
+    # Force-remove vertical grid lines
+    ax.xaxis.grid(False)
+    ax.yaxis.grid(True, linestyle='--', color='#2a2a2a', alpha=0.5)
+    ax.tick_params(axis='x', which='both', length=0)
+
     ax.plot(
         range(len(chart_df)),
         chart_df['ema20'].values,
