@@ -53,7 +53,7 @@ def generate_trade_chart(
     s = mpf.make_mpf_style(
         marketcolors=mc,
         base_mpf_style='charles',
-        gridaxis='y',
+        gridaxis='horizontal',
         gridstyle='--',
         gridcolor='#2a2a2a'
     )
