@@ -143,7 +143,7 @@ def get_sr_levels(ticker, current_price):
     for lvl in levels:
         if math.isnan(lvl["price"]): continue
         distance_pct = abs(lvl["price"] - current_price) / current_price * 100
-        if distance_pct <= 6.0:
+        if distance_pct <= 2.0:
             filtered.append(lvl)
 
     # Group and merge S/R levels that are within 0.15% of each other

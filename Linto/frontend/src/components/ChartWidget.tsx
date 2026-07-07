@@ -124,19 +124,25 @@ export default function ChartWidget({ data, currentInterval = "5m", onIntervalCh
       }
     }
 
-    // SR Levels
-    if (data.sr_levels && data.sr_levels.length > 0) {
-      data.sr_levels.forEach((lvl: any) => {
-        const color = lvl.type === "R" ? "rgba(255, 77, 77, 0.5)" : "rgba(0, 204, 150, 0.5)";
-        candlestickSeries.createPriceLine({
-          price: lvl.price,
-          color: color,
-          lineWidth: 1,
-          lineStyle: 3, // Dashed
-          axisLabelVisible: true,
-          title: `${lvl.tf} ${lvl.type}`,
+    // SR Levels (filter to avoid distorting chart scale)
+    if (data.sr_levels && data.sr_levels.length > 0 && data.hist_data && data.hist_data.length > 0) {
+      const lastClose = data.hist_data[data.hist_data.length - 1].close;
+      data.sr_levels
+        .filter((lvl: any) => {
+          const distPct = Math.abs(lvl.price - lastClose) / lastClose * 100;
+          return distPct <= 1.5;
+        })
+        .forEach((lvl: any) => {
+          const color = lvl.type === "R" ? "rgba(255, 77, 77, 0.5)" : "rgba(0, 204, 150, 0.5)";
+          candlestickSeries.createPriceLine({
+            price: lvl.price,
+            color: color,
+            lineWidth: 1,
+            lineStyle: 3, // Dashed
+            axisLabelVisible: true,
+            title: `${lvl.tf} ${lvl.type}`,
+          });
         });
-      });
     }
 
     const handleResize = () => {
