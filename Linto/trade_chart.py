@@ -44,10 +44,24 @@ def generate_trade_chart(
         ]
     ]
 
+    mc = mpf.make_marketcolors(
+        up='#26a69a', down='#ef5350',
+        edge='inherit',
+        wick='inherit',
+        volume='in'
+    )
+    s = mpf.make_mpf_style(
+        marketcolors=mc,
+        base_mpf_style='charles',
+        gridaxis='y',
+        gridstyle='--',
+        gridcolor='#2a2a2a'
+    )
+
     fig, axlist = mpf.plot(
         plot_df,
         type='candle',
-        style='charles',
+        style=s,
         volume=False,
         figsize=(16, 9),
         returnfig=True,

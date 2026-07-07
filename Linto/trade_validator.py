@@ -194,22 +194,11 @@ def validate_open_signals():
                             result_pct
                         )
 
-                        message = f"""
-✅ TP HIT
-
-{ticker}
-
+                        message = f"""✅ TP HIT | {ticker}
 📈 LONG
-
-🎯 TP:
-{tp:.2f}
-
-⚖️ RR:
-{rr:.2f}
-
-💰 PnL:
-+{result_pct:.2f}%
-"""
+🎯 TP: {tp:.2f}
+⚖️ RR: {rr:.2f}
+💰 PnL: +{result_pct:.2f}%"""
 
                         send_message(
                             message
@@ -238,22 +227,11 @@ def validate_open_signals():
                             result_pct
                         )
 
-                        message = f"""
-❌ SL HIT
-
-{ticker}
-
+                        message = f"""❌ SL HIT | {ticker}
 📈 LONG
-
-🛑 SL:
-{sl:.2f}
-
-⚖️ RR:
-{rr:.2f}
-
-💰 PnL:
-{result_pct:.2f}%
-"""
+🛑 SL: {sl:.2f}
+⚖️ RR: {rr:.2f}
+💰 PnL: {result_pct:.2f}%"""
 
                         send_message(
                             message
@@ -288,22 +266,11 @@ def validate_open_signals():
                             result_pct
                         )
 
-                        message = f"""
-✅ TP HIT
-
-{ticker}
-
+                        message = f"""✅ TP HIT | {ticker}
 📉 SHORT
-
-🎯 TP:
-{tp:.2f}
-
-⚖️ RR:
-{rr:.2f}
-
-💰 PnL:
-+{result_pct:.2f}%
-"""
+🎯 TP: {tp:.2f}
+⚖️ RR: {rr:.2f}
+💰 PnL: +{result_pct:.2f}%"""
 
                         send_message(
                             message
@@ -332,22 +299,11 @@ def validate_open_signals():
                             result_pct
                         )
 
-                        message = f"""
-❌ SL HIT
-
-{ticker}
-
+                        message = f"""❌ SL HIT | {ticker}
 📉 SHORT
-
-🛑 SL:
-{sl:.2f}
-
-⚖️ RR:
-{rr:.2f}
-
-💰 PnL:
-{result_pct:.2f}%
-"""
+🛑 SL: {sl:.2f}
+⚖️ RR: {rr:.2f}
+💰 PnL: {result_pct:.2f}%"""
 
                         send_message(
                             message

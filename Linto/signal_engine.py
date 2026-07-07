@@ -130,33 +130,16 @@ def process_signal(
         rr=rr
     )
 
-    message = f"""
-🟡 {config['ticker']} AI Forecast
+    message = f"""🟡 {config['ticker']} AI Forecast
 
-💰 Current:
-{current_price:.2f}
-
-🔮 Forecast:
-{forecast_price:.2f}
-
-📈 Move:
-{move_pct:.2f}%
-
-📊 Trend:
-{direction}
-
-⚖️ RR:
-{rr:.2f}
-
-🎯 Confidence:
-{confidence:.1f}%
-
-⚠️ Macro Risk:
-{macro['risk']}
-
-⏱ Horizon:
-{config['pred_len'] * 5} mins
-"""
+💰 Current: {current_price:.2f}
+🔮 Forecast: {forecast_price:.2f}
+📈 Move: {move_pct:.2f}%
+📊 Trend: {direction}
+⚖️ RR: {rr:.2f}
+🎯 Confidence: {confidence:.1f}%
+⚠️ Macro Risk: {macro['risk']}
+⏱ Horizon: {config['pred_len'] * 5} mins"""
     
     clustered = recent_similar_signal_exists(
 
