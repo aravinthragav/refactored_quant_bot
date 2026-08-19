@@ -107,19 +107,13 @@ def process_signal(
 
     macro = get_macro_risk()
 
-    confidence = round(
-        min(
-            95,
-            max(
-                50,
-                100 - (
-                    df['volatility'].iloc[-1]
-                    * 1000
-                )
-            )
-        ) * macro["multiplier"],
-        1
-    )
+    try:
+        pred_len = config["pred_len"]
+        actual = df['close'].tail(pred_len).values
+        predicted = pred_df['close'].values[:len(actual)]
+        mae = float(sum(abs(actual - predicted)) / len(actual))
+    except:
+        mae = 0.0
 
     chart_path = generate_trade_chart(
         ticker=config["ticker"],
@@ -139,7 +133,7 @@ def process_signal(
 📈 Move: {move_pct:.2f}%
 📊 Trend: {direction}
 ⚖️ RR: {rr:.2f}
-🎯 Confidence: {confidence:.1f}%
+🎯 Model MAE: {mae:.2f}
 ⚠️ Macro Risk: {macro['risk']}
 ⏱ Horizon: {config['pred_len'] * 5} mins"""
     
@@ -178,7 +172,7 @@ def process_signal(
         sl_price=sl,
         forecast_price=forecast_price,
         move_pct=move_pct,
-        confidence=confidence,
+        confidence=mae,
         macro_risk=macro["risk"],
         event_name="None"
     )
