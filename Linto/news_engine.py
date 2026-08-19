@@ -135,6 +135,16 @@ def fetch_news(asset, limit=15):
     articles = []
     
 
+    IGNORE_TERMS = [
+        "approval of the application",
+        "monetary collapse",
+        "just getting started",
+        "part 1",
+        "part 2",
+        "what to expect",
+        "price action warning"
+    ]
+
     for feed_url in feeds:
 
         try:
@@ -146,8 +156,10 @@ def fetch_news(asset, limit=15):
                 title = entry.title.lower()
 
                 if any(k in title for k in keywords):
+                    
+                    if not any(ignore in title for ignore in IGNORE_TERMS):
 
-                    articles.append({
+                        articles.append({
 
                         "title": entry.title,
 
