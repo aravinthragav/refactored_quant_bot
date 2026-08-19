@@ -46,9 +46,11 @@ def process_signal(
 
     atr = df['atr'].iloc[-1]
 
+    forecast_delta = forecast_price - current_price
+
     if move_pct > 0:
 
-        tp = forecast_price
+        tp = current_price + (forecast_delta * 0.75)
 
         sl = (
             current_price
@@ -57,7 +59,7 @@ def process_signal(
 
     else:
 
-        tp = forecast_price
+        tp = current_price + (forecast_delta * 0.75)
 
         sl = (
             current_price
