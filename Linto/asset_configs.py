@@ -32,7 +32,7 @@ ASSETS = {
 
         "signal_threshold": 0.10,
 
-        "atr_multiplier": 1.0,
+        "atr_multiplier": 0.75,
 
         "rr_min": 1.3,
 

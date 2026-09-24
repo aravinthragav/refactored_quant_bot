@@ -45,6 +45,16 @@ def process_signal(
     )
 
     atr = df['atr'].iloc[-1]
+    ema89 = df['ema89_median'].iloc[-1]
+
+    import math
+    if not math.isnan(ema89):
+        if move_pct > 0 and current_price < ema89:
+            print("Counter-trend signal skipped (Bullish prediction in Bearish trend)")
+            return
+        if move_pct < 0 and current_price > ema89:
+            print("Counter-trend signal skipped (Bearish prediction in Bullish trend)")
+            return
 
     forecast_delta = forecast_price - current_price
 
