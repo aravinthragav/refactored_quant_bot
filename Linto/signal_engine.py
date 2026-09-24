@@ -46,15 +46,32 @@ def process_signal(
 
     atr = df['atr'].iloc[-1]
     ema89 = df['ema89_median'].iloc[-1]
+    rsi = df['rsi'].iloc[-1]
 
     import math
-    if not math.isnan(ema89):
-        if move_pct > 0 and current_price < ema89:
-            print("Counter-trend signal skipped (Bullish prediction in Bearish trend)")
-            return
-        if move_pct < 0 and current_price > ema89:
-            print("Counter-trend signal skipped (Bearish prediction in Bullish trend)")
-            return
+    if not math.isnan(ema89) and not math.isnan(rsi):
+        is_bullish = move_pct > 0
+        is_bearish = move_pct < 0
+        
+        is_trend_aligned = (is_bullish and current_price >= ema89) or (is_bearish and current_price <= ema89)
+        
+        if not is_trend_aligned:
+            is_valid_reversal = False
+            
+            # 1. RSI Exhaustion (Oversold/Overbought)
+            if is_bullish and rsi < 35:
+                is_valid_reversal = True
+            elif is_bearish and rsi > 65:
+                is_valid_reversal = True
+                
+            # 2. Rubber Band (Mean Reversion Stretch > 0.4%)
+            stretch_pct = (abs(current_price - ema89) / ema89) * 100
+            if stretch_pct > 0.4:
+                is_valid_reversal = True
+                
+            if not is_valid_reversal:
+                print(f"Invalid Reversal skipped. RSI: {rsi:.1f}, Stretch: {stretch_pct:.2f}%")
+                return
 
     forecast_delta = forecast_price - current_price
 
